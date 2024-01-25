@@ -7,6 +7,7 @@ public final class core extends Plugin {
     @Override
     public void onEnable() {
         getLogger().info("[PLUGIN] ENABLED!");
+
     }
 
     @Override
