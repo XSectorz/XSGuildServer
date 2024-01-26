@@ -33,33 +33,52 @@ public class XSDatabaseHandler {
         return USER;
     }
 
-    public static void sqlConnection() {
+    private final static String MAIN_SQL_QUERY = " ("
+            + "id INT PRIMARY KEY AUTO_INCREMENT, "
+            + "Guild VARCHAR(32), "
+            + "GuildName TEXT, "
+            + "Players TEXT"
+            + ")";
+
+    private final static String SUB_SQL_QUERY = " ("
+            + "id INT PRIMARY KEY AUTO_INCREMENT, "
+            + "Reference INT, "
+            + "Level INT, "
+            + "Tech TEXT"
+            + ")";
+
+    public static void sqlConnection(String table,String query) {
         String host = mainConfig.getConfig().getString("database.host");
         DB_NAME =  mainConfig.getConfig().getString("database.dbName");
-        JDBC_URL = "jdbc:mysql://" + host +  "/" + DB_NAME;
+        JDBC_URL = "jdbc:mysql://" + host +  "/" + getDbName();
         USER = mainConfig.getConfig().getString("database.user");
         PASS = mainConfig.getConfig().getString("database.password");
 
 
         try {
-            Connection connection = DriverManager.getConnection(JDBC_URL,USER,PASS);
+            Connection connection = DriverManager.getConnection(getJdbcUrl(),getUSER(),getPASS());
 
             Statement statement = connection.createStatement();
 
-            String createTableQuery = "CREATE TABLE IF NOT EXISTS " + getGlobalTable() + " ("
-                    + "id INT PRIMARY KEY AUTO_INCREMENT, "
-                    + "Guild VARCHAR(32), "
-                    + "GuildName TEXT, "
-                    + "Players TEXT"
-                    + ")";
+            String createTableQuery = "CREATE TABLE IF NOT EXISTS " + table + query;
             statement.executeUpdate(createTableQuery);
             statement.close();
             connection.close();
 
-            core.getPlugin().getLogger().info("§x§E§7§F§F§0§0[XSGUILDS] Database : §x§6§0§F§F§0§0Connected");
+            //core.getPlugin().getLogger().info("[XSGUILDS] Database : Connected");
         } catch (SQLException e) {
-            core.getPlugin().getLogger().info("§x§E§7§F§F§0§0[XSGUILDS] Database : §x§C§3§0§C§2§ANot Connected");
+            //core.getPlugin().getLogger().info("[XSGUILDS] Database : Not Connected");
             e.printStackTrace();
         }
+    }
+
+    public static void createSQLDatabase() {
+        sqlConnection(getGlobalTable(),MAIN_SQL_QUERY);
+
+        for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+            core.getPlugin().getLogger().info("[XSGUILDS] " + servers);
+            sqlConnection("xsguilds_bungee_" + servers,SUB_SQL_QUERY);
+        }
+
     }
 }

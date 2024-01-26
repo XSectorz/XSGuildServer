@@ -1,3 +1,4 @@
 name: XSGuildBungee
 version: '${project.version}'
 main: net.xsapi.panat.xsguildbungee.core
+author: XSectorZ
