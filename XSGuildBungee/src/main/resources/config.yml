@@ -1,0 +1,15 @@
+database:
+  host: localhost
+  port: 3306
+  dbName: xsguilds
+  user: root
+  password: 992545tai
+
+guilds-group:
+  survival:
+    - survival/01
+    - survival/02
+  lobby:
+    - lobby/01
+  skyblock:
+    - skyblock/01
