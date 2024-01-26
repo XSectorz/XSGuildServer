@@ -6,6 +6,7 @@ import net.xsapi.panat.xsguildbungee.handler.XSDatabaseHandler;
 import net.xsapi.panat.xsguildbungee.handler.XSHandler;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public final class core extends Plugin {
 
@@ -28,6 +29,17 @@ public final class core extends Plugin {
 
         XSHandler.loadEvent();
         XSDatabaseHandler.createSQLDatabase();
+
+
+        XSHandler.subChannel();
+        getProxy().getScheduler().schedule(plugin, new Runnable() {
+            @Override
+            public void run() {
+                XSHandler.sendCustomString(XSHandler.getSubChannel(),"Lobby-01","TESTTT");
+                getLogger().info("REPEATING....");
+            }
+        }, 0L, 10, TimeUnit.SECONDS);
+        //XSHandler.sendCustomString(XSHandler.getSubChannel(),"Lobby-01","TESTTT");
     }
 
     @Override
