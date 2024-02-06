@@ -1,5 +1,6 @@
 package net.xsapi.panat.xsguildbungee.handler;
 
+import net.md_5.bungee.api.ChatColor;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
 
@@ -79,6 +80,72 @@ public class XSDatabaseHandler {
             core.getPlugin().getLogger().info("[XSGUILDS] " + servers);
             sqlConnection("xsguilds_bungee_" + servers,SUB_SQL_QUERY);
         }
-
     }
+
+    public static void createGuild(String guildName,String leader) {
+        try {
+            Connection connection = DriverManager.getConnection(getJdbcUrl(),getUSER(),getPASS());
+
+            String checkPlayerQuery = "SELECT EXISTS(SELECT * FROM " + getGlobalTable() + " WHERE Guild = ?) AS exist";
+            PreparedStatement preparedStatement = connection.prepareStatement(checkPlayerQuery);
+            preparedStatement.setString(1, guildName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                boolean exists = resultSet.getBoolean("exist");
+
+                if (!exists) {
+                    createMainGuildServer(connection, ChatColor.stripColor(guildName),guildName,leader);
+
+                    String getIDQuery = "SELECT id FROM " + getGlobalTable() + " WHERE Guild = ?";
+                    PreparedStatement preparedStatementGetID = connection.prepareStatement(getIDQuery);
+                    preparedStatementGetID.setString(1, guildName);
+                    ResultSet resultSearch = preparedStatementGetID.executeQuery();
+
+                    while (resultSearch.next()) {
+                        int id = resultSearch.getInt("id");
+                        for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                            createSubGuildServer(connection,servers,id);
+                        }
+                    }
+                } else {
+                    //core.getPlugin().getLogger().info("Guild already exists");
+                }
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private static void createMainGuildServer(Connection connection,String guild,String guildName,String leader) {
+        String insertQuery = "INSERT INTO " + "xsguilds_bungee_main" + " (Guild, GuildName, Players) "
+                + "VALUES (?, ?, ?)";
+
+        try (PreparedStatement preparedStatementInsert = connection.prepareStatement(insertQuery)) {
+            preparedStatementInsert.setString(1, guild);
+            preparedStatementInsert.setString(2, guildName);
+            preparedStatementInsert.setString(3, "[LEADER:" + leader + "]");
+            preparedStatementInsert.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    private static void createSubGuildServer(Connection connection,String subGroup,int ref) {
+        String insertQuery = "INSERT INTO " + ("xsguilds_bungee_"+subGroup) + " (Reference, Level, Tech) "
+                + "VALUES (?, ?, ?)";
+
+        try (PreparedStatement preparedStatementInsert = connection.prepareStatement(insertQuery)) {
+            preparedStatementInsert.setInt(1, ref);
+            preparedStatementInsert.setInt(2, 1);
+            preparedStatementInsert.setString(3, "");
+            preparedStatementInsert.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

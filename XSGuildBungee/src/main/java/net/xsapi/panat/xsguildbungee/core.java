@@ -27,23 +27,21 @@ public final class core extends Plugin {
             throw new RuntimeException(e);
         }
 
-        XSHandler.loadEvent();
+        XSHandler.initSystem();
         XSDatabaseHandler.createSQLDatabase();
 
-
-        XSHandler.subChannel();
-        getProxy().getScheduler().schedule(plugin, new Runnable() {
+        /*getProxy().getScheduler().schedule(plugin, new Runnable() {
             @Override
             public void run() {
-                XSHandler.sendCustomString(XSHandler.getSubChannel(),"Lobby-01","TESTTT");
+
                 getLogger().info("REPEATING....");
             }
-        }, 0L, 10, TimeUnit.SECONDS);
-        //XSHandler.sendCustomString(XSHandler.getSubChannel(),"Lobby-01","TESTTT");
+        }, 0L, 10, TimeUnit.SECONDS);*/
+
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+
     }
 }

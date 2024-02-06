@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-public final class core extends JavaPlugin implements PluginMessageListener {
+public final class core extends JavaPlugin {
 
     private static core plugin;
 
@@ -21,6 +21,9 @@ public final class core extends JavaPlugin implements PluginMessageListener {
         Bukkit.broadcastMessage("[Client] Enabled!");
 
         plugin = this;
+
+        XSHandler.initSystem();
+
     }
 
     @Override
@@ -28,12 +31,4 @@ public final class core extends JavaPlugin implements PluginMessageListener {
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
     }
 
-    @Override
-    public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if (channel.equals(XSHandler.getSubChannel())) {
-            ByteArrayDataInput in = ByteStreams.newDataInput(message);
-            String receivedString = in.readUTF();
-            Bukkit.broadcastMessage(receivedString);
-        }
-    }
 }

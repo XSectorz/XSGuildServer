@@ -5,6 +5,11 @@ database:
   user: root
   password: 992545tai
 
+redis:
+  host: localhost
+  port: 6379
+  password: ''
+
 guilds-group:
   survival:
     - survival/01
