@@ -1,0 +1,8 @@
+system:
+  prefix: "<color:#FFE300><bold>XSGuild</bold> <dark_gray>▸ <white>"
+  helps:
+    create: "<color:#4A404B>▪ <color:#D1A81D>/xsguild create <name> <white>เพื่อสร้างกิลด์"
+    invite: "<color:#4A404B>▪ <color:#D1A81D>/xsguild invite <p-name> <white>เพื่อเชิญผู้เล่น"
+    kick: "<color:#4A404B>▪ <color:#D1A81D>/xsguild kick <p-name> <white>เตะผู้เล่นออกจากกิลด์"
+    gui: "<color:#4A404B>▪ <color:#D1A81D>/xsguild gui <white>เปิดเมนูจัดการกิลด์"
+    leave: "<color:#4A404B>▪ <color:#D1A81D>/xsguild leave <white>เพื่อออกจากกิลด์"

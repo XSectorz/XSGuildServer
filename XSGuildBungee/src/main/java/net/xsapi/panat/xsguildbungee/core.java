@@ -3,7 +3,9 @@ package net.xsapi.panat.xsguildbungee;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.xsapi.panat.xsguildbungee.config.configLoader;
 import net.xsapi.panat.xsguildbungee.handler.XSDatabaseHandler;
+import net.xsapi.panat.xsguildbungee.handler.XSGuildsHandler;
 import net.xsapi.panat.xsguildbungee.handler.XSHandler;
+import net.xsapi.panat.xsguildbungee.handler.XSRedisHandler;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -27,23 +29,22 @@ public final class core extends Plugin {
             throw new RuntimeException(e);
         }
 
-        XSHandler.loadEvent();
+        XSHandler.initSystem();
         XSDatabaseHandler.createSQLDatabase();
+        XSGuildsHandler.loadData();
 
-
-        XSHandler.subChannel();
-        getProxy().getScheduler().schedule(plugin, new Runnable() {
+        /*getProxy().getScheduler().schedule(plugin, new Runnable() {
             @Override
             public void run() {
-                XSHandler.sendCustomString(XSHandler.getSubChannel(),"Lobby-01","TESTTT");
+
                 getLogger().info("REPEATING....");
             }
-        }, 0L, 10, TimeUnit.SECONDS);
-        //XSHandler.sendCustomString(XSHandler.getSubChannel(),"Lobby-01","TESTTT");
+        }, 0L, 10, TimeUnit.SECONDS);*/
+
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        XSRedisHandler.destroyThreads();
     }
 }

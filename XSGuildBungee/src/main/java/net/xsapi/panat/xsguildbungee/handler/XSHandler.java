@@ -1,10 +1,10 @@
 package net.xsapi.panat.xsguildbungee.handler;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import net.md_5.bungee.api.config.ServerInfo;
+import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
 import net.xsapi.panat.xsguildbungee.listener.playerSwitch;
+
+import java.util.HashMap;
 
 public class XSHandler {
 
@@ -14,19 +14,24 @@ public class XSHandler {
         return subChannel;
     }
 
+
     public static void loadEvent() {
         core.getPlugin().getProxy().getPluginManager().registerListener(core.getPlugin(),new playerSwitch());
     }
 
     public static void subChannel() {
-        core.getPlugin().getProxy().registerChannel(getSubChannel());
+        /*for(String server : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+            for(String subserver : mainConfig.getConfig().getStringList("guilds-group." + server)) {
+                XSRedisHandler.subscribeToChannelAsync(getSubChannel() + "_" + subserver);
+            }
+        }*/
+        XSRedisHandler.subscribeToChannelAsync(getSubChannel() + "_bungeecord");
     }
 
-    public static void sendCustomString(String subChannel,String serverName, String customString) {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF(customString);
-        ServerInfo serverInfo = core.getPlugin().getProxy().getServerInfo(serverName);
-        serverInfo.sendData(subChannel, out.toByteArray());
+    public static void initSystem() {
+        XSRedisHandler.redisConnection();
+        loadEvent();
+        subChannel();
     }
 
 }
