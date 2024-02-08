@@ -31,6 +31,7 @@ public final class core extends JavaPlugin {
     public void onDisable() {
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
         XSRedisHandler.destroyThreads();
+        XSHandler.unregisterPlaceholder();
     }
 
 }

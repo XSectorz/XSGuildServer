@@ -15,10 +15,15 @@ public class XSGuildsHandler {
 
     public static HashMap<String, XSGuilds> guildList = new HashMap<>();
 
+    public static HashMap<String,String> players = new HashMap<>();
+
     public static HashMap<String, XSGuilds> getGuildList() {
         return guildList;
     }
 
+    public static HashMap<String, String> getPlayers() {
+        return players;
+    }
     public static void loadGuildData(String json) {
         Gson gson = new Gson();
 

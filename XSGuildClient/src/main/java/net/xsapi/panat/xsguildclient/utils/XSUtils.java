@@ -12,4 +12,8 @@ public class XSUtils {
         return legacy.replace('&', '§');
     }
 
+    public static String decodeTextNotReplace(String str) {
+        Component parsedMessage = MiniMessage.builder().build().deserialize(str);
+        return LegacyComponentSerializer.legacyAmpersand().serialize(parsedMessage);
+    }
 }

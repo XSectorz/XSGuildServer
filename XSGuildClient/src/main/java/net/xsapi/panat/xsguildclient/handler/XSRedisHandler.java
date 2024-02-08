@@ -64,12 +64,19 @@ public class XSRedisHandler {
                             String type = message.split("<SPLIT>")[0];
                             String arguments = message.split("<SPLIT>")[1];
 
-                            if(type.equalsIgnoreCase(XSDATA_TYPE.LOAD_DATA.toString())) {
+                            if(type.equalsIgnoreCase(XSDATA_TYPE.LOAD_DATA.toString())) { //player + ";" + servers + ";" + guild
                                 //Bukkit.broadcastMessage(arguments.split(";")[0]);
-                                if(Bukkit.getPlayer(arguments.split(";")[0]) != null) {
-                                    Bukkit.getLogger().info("LOAD DATA");
-                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEBUG+"<SPLIT>Recieved data from " + XSHandler.getServername());
+                                String player = arguments.split(";")[0];
+                                if(arguments.split(";").length == 2) { //NOT HAVE GUILD
+                                    Bukkit.broadcastMessage("PLAYER: " + player + " NOT HAVE GUILD" );
+                                } else {
+                                    //XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEBUG+"<SPLIT>Recieved data from " + XSHandler.getServername());
+                                    String server = arguments.split(";")[1];
+                                    String guild = arguments.split(";")[2];
+                                    Bukkit.broadcastMessage("PLAYER: " + player + " SERVER-> " + server + " GUILD-> " + guild + " TEST");
+                                    XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild);
                                 }
+
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.GET_GUILD.toString())) {
                                 XSGuildsHandler.loadGuildData(arguments);
                             }

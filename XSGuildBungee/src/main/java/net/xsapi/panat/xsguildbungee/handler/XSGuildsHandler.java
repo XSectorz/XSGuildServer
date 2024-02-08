@@ -50,7 +50,7 @@ public class XSGuildsHandler {
                     String name = player.split(":")[1];
 
                     xsGuilds.getMembers().put(name,rank);
-
+                    getPlayers().put(name,guilRealName);
                     if(rank.equalsIgnoreCase("LEADER")) {
                         xsGuilds.setLeader(name);
                     } else if(rank.equalsIgnoreCase("SUB-LEADER")) {

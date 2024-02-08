@@ -8,6 +8,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class XSRedisHandler {
     public static String redisHost;
@@ -72,11 +73,20 @@ public class XSRedisHandler {
                                  //core.getPlugin().getLogger().info("Create guild " + guildName);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.REQ_DATA.toString())) {
                                 String server = arguments.split(";")[0];
-                                String players = arguments.split(";")[1];
+                                String player = arguments.split(";")[1];
 
+                                /*for(Map.Entry<String,String> list : XSGuildsHandler.getPlayers().entrySet()) {
+                                    core.getPlugin().getLogger().info(list.getKey() + " " + list.getValue());
+                                }*/
                                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                                     if(mainConfig.getConfig().getStringList("guilds-group." + servers).contains(server)) {
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.LOAD_DATA+"<SPLIT>" + players + ";" + servers + ";GUILD");
+                                        if(!XSGuildsHandler.getPlayers().containsKey(player)) {
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.LOAD_DATA+"<SPLIT>" + player + ";NO_GUILD");
+                                        } else {
+                                            String guild = XSGuildsHandler.getPlayers().get(player);
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.LOAD_DATA+"<SPLIT>" + player + ";" + servers + ";" + guild);
+                                        }
+                                        break;
                                     }
                                 }
                             } else  if(type.equalsIgnoreCase(XSDATA_TYPE.REQ_GUILD.toString())) {
