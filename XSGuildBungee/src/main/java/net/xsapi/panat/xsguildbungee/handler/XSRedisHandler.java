@@ -68,7 +68,7 @@ public class XSRedisHandler {
                                 String guildRealName = arguments.split(";")[1];
                                 String guildName = arguments.split(";")[2];
                                 XSDatabaseHandler.createGuild(guildRealName,guildName,leader);
-                                //core.getPlugin().getLogger().info("Create guild " + guildName);
+                                 //core.getPlugin().getLogger().info("Create guild " + guildName);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.REQ_DATA.toString())) {
                                 String server = arguments.split(";")[0];
                                 String players = arguments.split(";")[1];
