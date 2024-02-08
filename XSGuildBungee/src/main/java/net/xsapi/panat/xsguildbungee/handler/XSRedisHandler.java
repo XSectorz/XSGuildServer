@@ -1,5 +1,6 @@
 package net.xsapi.panat.xsguildbungee.handler;
 
+import com.google.gson.Gson;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
 import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
@@ -60,8 +61,8 @@ public class XSRedisHandler {
 
                             core.getPlugin().getLogger().info("[bungeecord] GET MESSAGE " + message);
 
-                            String type = message.split(":")[0];
-                            String arguments = message.split(":")[1];
+                            String type = message.split("<SPLIT>")[0];
+                            String arguments = message.split("<SPLIT>")[1];
 
                             if(type.equalsIgnoreCase(XSDATA_TYPE.CREATE.toString())) {
                                 String leader = arguments.split(";")[0];
@@ -75,9 +76,16 @@ public class XSRedisHandler {
 
                                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                                     if(mainConfig.getConfig().getStringList("guilds-group." + servers).contains(server)) {
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.LOAD_DATA+":" + players + ";" + servers + ";GUILD");
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.LOAD_DATA+"<SPLIT>" + players + ";" + servers + ";GUILD");
                                     }
                                 }
+                            } else  if(type.equalsIgnoreCase(XSDATA_TYPE.REQ_GUILD.toString())) {
+                                String server = arguments.split(";")[0];
+                                Gson gson = new Gson();
+
+                                String guildJson = gson.toJson(XSGuildsHandler.getGuildList());
+                                core.getPlugin().getLogger().info(guildJson);
+                                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.GET_GUILD+"<SPLIT>" + guildJson);
                             }
 
                         }

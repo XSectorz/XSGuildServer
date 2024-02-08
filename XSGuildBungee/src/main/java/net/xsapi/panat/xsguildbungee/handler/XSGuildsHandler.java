@@ -63,7 +63,6 @@ public class XSGuildsHandler {
                 }
                 getGuildList().put(guilRealName,xsGuilds);
                 //core.getPlugin().getLogger().info("---------------------");
-
             }
 
             resultSet.close();

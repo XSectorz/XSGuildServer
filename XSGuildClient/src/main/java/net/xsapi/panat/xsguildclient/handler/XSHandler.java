@@ -5,6 +5,7 @@ import net.xsapi.panat.xsguildclient.config.configLoader;
 import net.xsapi.panat.xsguildclient.config.mainConfig;
 import net.xsapi.panat.xsguildclient.core;
 import net.xsapi.panat.xsguildclient.listener.joinEvent;
+import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import org.bukkit.Bukkit;
 
 
@@ -24,7 +25,7 @@ public class XSHandler {
 
     private static void subChannel() {
         servername = mainConfig.customConfig.getString("configuration.server");
-        XSRedisHandler.subscribeToChannelAsync(getSubChannel()+servername);
+        XSRedisHandler.subscribeToChannelAsync(getSubChannel()+getServername());
     }
 
     private static void loadEvent() {
@@ -37,6 +38,11 @@ public class XSHandler {
         XSRedisHandler.redisConnection();
         subChannel();
         loadEvent();
+        loadGuildData();
+    }
+
+    public static void loadGuildData() {
+        XSRedisHandler.sendRedisMessage(getSubChannel()+"_bungeecord", XSDATA_TYPE.REQ_GUILD+"<SPLIT>" + getServername());
     }
 
 

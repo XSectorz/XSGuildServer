@@ -29,7 +29,7 @@ public class commands implements CommandExecutor {
                 } else if(args.length == 2) {
                     if(args[0].equalsIgnoreCase("create")) {
                         String name = args[1].replace('&','§');
-                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.CREATE +":" + p.getName() + ";" + ChatColor.stripColor(name) + ";" + name);
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.CREATE +"<SPLIT>" + p.getName() + ";" + ChatColor.stripColor(name) + ";" + name);
 
                         //Bukkit.broadcastMessage("Name" + ChatColor.stripColor(name));
                     }

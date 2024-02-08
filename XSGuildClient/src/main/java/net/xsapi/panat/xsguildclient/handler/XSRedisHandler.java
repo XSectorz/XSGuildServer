@@ -61,15 +61,17 @@ public class XSRedisHandler {
 
                         if(channel.equalsIgnoreCase(XSHandler.getSubChannel()+XSHandler.getServername())) {
                             core.getPlugin().getLogger().info("GET MESSAGE " + message);
-                            String type = message.split(":")[0];
-                            String arguments = message.split(":")[1];
+                            String type = message.split("<SPLIT>")[0];
+                            String arguments = message.split("<SPLIT>")[1];
 
                             if(type.equalsIgnoreCase(XSDATA_TYPE.LOAD_DATA.toString())) {
-                                Bukkit.broadcastMessage(arguments.split(";")[0]);
+                                //Bukkit.broadcastMessage(arguments.split(";")[0]);
                                 if(Bukkit.getPlayer(arguments.split(";")[0]) != null) {
                                     Bukkit.getLogger().info("LOAD DATA");
-                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEBUG+":Recieved data from " + XSHandler.getServername());
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEBUG+"<SPLIT>Recieved data from " + XSHandler.getServername());
                                 }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.GET_GUILD.toString())) {
+                                XSGuildsHandler.loadGuildData(arguments);
                             }
                         }
                     }
