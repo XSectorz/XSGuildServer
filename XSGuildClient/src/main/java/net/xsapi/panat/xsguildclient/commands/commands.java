@@ -89,6 +89,25 @@ public class commands implements CommandExecutor {
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.CREATE +"<SPLIT>" + p.getName() + ";" + ChatColor.stripColor(name) + ";" + nameWithColor);
                         p.sendMessage(XSUtils.decodeTextFromConfig("create").replace("%guild_name%",nameWithColor));
                         return true;
+                    } else if(args[0].equalsIgnoreCase("invite")) {
+                        String playerName = args[1];
+
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                        if(!(xsGuilds.getLeader().equalsIgnoreCase(p.getName()) || xsGuilds.getSubleader().contains(p.getName()))) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                            return false;
+                        }
+
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.INVITE+"<SPLIT>"+XSHandler.getServername()+";"+playerName+";"+guild+";"+p.getName());
+                        return true;
+
                     }
                 }
             }

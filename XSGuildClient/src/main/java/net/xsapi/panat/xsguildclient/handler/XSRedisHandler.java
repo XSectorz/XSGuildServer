@@ -6,7 +6,9 @@ import net.xsapi.panat.xsguildclient.config.mainConfig;
 import net.xsapi.panat.xsguildclient.core;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
+import net.xsapi.panat.xsguildclient.utils.XSUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -94,8 +96,21 @@ public class XSRedisHandler {
                                     XSGuildsHandler.getPlayers().put(xsGuilds.getLeader(),server+"<SPLIT>"+xsGuilds.getGuildRealName());
                                     Bukkit.broadcastMessage("PLAYER ONLINE UPDATED TO " + server+"<SPLIT>"+xsGuilds.getGuildRealName());
                                 }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.INVITE_RETURN.toString())) {
+                                String result = arguments.split(";")[0];
+                                String senderName = arguments.split(";")[1];
+                                try {
+                                    Player sender = Bukkit.getPlayer(senderName);
+                                    assert sender != null;
+                                    if(result.equalsIgnoreCase("NULL_PLAYER")) {
+                                        sender.sendMessage(XSUtils.decodeTextFromConfig("null_player"));
+                                    } else if(result.equalsIgnoreCase("SENT")) {
+                                        String targetName = arguments.split(";")[2];
+                                        sender.sendMessage(XSUtils.decodeTextFromConfig("invite_send").replace("%player_name%",targetName));
+                                    }
+                                } catch (Exception ignored) {
 
-
+                                }
                             }
                         }
                     }

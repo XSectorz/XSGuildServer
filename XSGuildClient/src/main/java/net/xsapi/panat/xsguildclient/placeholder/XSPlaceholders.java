@@ -45,7 +45,7 @@ public class XSPlaceholders extends PlaceholderExpansion {
                 text = text.replace("%guild_level%",xsGuilds.getSubGuilds().get(server).getLevel()+"");
                 text = text.replace("§","&");
 
-                return XSUtils.decodeTextNotReplace(text);
+                return XSUtils.decodeTextNotReplace(text).replace('&', '§');
             }
 
             return XSUtils.decodeText(text);

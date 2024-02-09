@@ -1,6 +1,7 @@
 package net.xsapi.panat.xsguildbungee.handler;
 
 import com.google.gson.Gson;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
 import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
@@ -106,7 +107,6 @@ public class XSRedisHandler {
                                 //core.getPlugin().getLogger().info(guildJson);
                                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.GET_GUILD+"<SPLIT>" + guildJson);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.DISBAND.toString())) {
-                                String server = arguments.split(";")[0];
                                 String guild = arguments.split(";")[1];
 
                                 XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
@@ -114,6 +114,20 @@ public class XSRedisHandler {
                                 XSGuildsHandler.getPlayers().remove(xsGuilds.getLeader());
                                 XSGuildsHandler.getGuildList().remove(guild);
                                 core.getPlugin().getLogger().info("REMOVED " + guild);
+
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.INVITE.toString())) {
+
+                                String server = arguments.split(";")[0];
+                                String player = arguments.split(";")[1];
+                                String guild = arguments.split(";")[2];
+                                String sender = arguments.split(";")[3];
+
+                                ProxiedPlayer p = core.getPlugin().getProxy().getPlayer(player);
+                                if(p == null || !p.isConnected()) {
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>NULL_PLAYER;" + sender);
+                                } else {
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>SENT;" + sender+";"+player);
+                                }
 
                             }
 
