@@ -21,6 +21,18 @@ public class XSGuildsHandler {
         return players;
     }
 
+    public static void createTemplateData(int id,String guildRealName,String guildName,String leader) {
+        XSGuilds xsGuilds = new XSGuilds(id,guildRealName,guildName,1);
+
+        xsGuilds.getMembers().put(leader,"LEADER");
+        xsGuilds.setLeader(leader);
+
+        for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+            xsGuilds.getSubGuilds().put(servers,loadSubGuild(servers,id));
+        }
+        getGuildList().put(guildRealName,xsGuilds);
+    }
+
     public static void loadData() {
         try {
             Connection connection = DriverManager.getConnection(XSDatabaseHandler.getJdbcUrl(),
@@ -33,15 +45,16 @@ public class XSGuildsHandler {
             if (resultSet.next()) {
 
                 int guildID = resultSet.getInt("id");
-                String guilRealName = resultSet.getString("Guild");
+                String guildRealName = resultSet.getString("Guild");
                 String guildName = resultSet.getString("GuildName");
                 String members = resultSet.getString("Players");
-                core.getPlugin().getLogger().info(guildID+"");
-                core.getPlugin().getLogger().info(guildName);
-                core.getPlugin().getLogger().info(members);
-                core.getPlugin().getLogger().info("---------------");
+                int guildLevel = resultSet.getInt("GuildLevel");
+                //core.getPlugin().getLogger().info(guildID+"");
+                //core.getPlugin().getLogger().info(guildName);
+                //core.getPlugin().getLogger().info(members);
+                //core.getPlugin().getLogger().info("---------------");
 
-                XSGuilds xsGuilds = new XSGuilds(guildName);
+                XSGuilds xsGuilds = new XSGuilds(guildID,guildRealName,guildName,guildLevel);
 
                 members = members.replace("[","").replace("]","");
 
@@ -50,7 +63,7 @@ public class XSGuildsHandler {
                     String name = player.split(":")[1];
 
                     xsGuilds.getMembers().put(name,rank);
-                    getPlayers().put(name,guilRealName);
+                    getPlayers().put(name,guildRealName);
                     if(rank.equalsIgnoreCase("LEADER")) {
                         xsGuilds.setLeader(name);
                     } else if(rank.equalsIgnoreCase("SUB-LEADER")) {
@@ -61,11 +74,53 @@ public class XSGuildsHandler {
                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                     xsGuilds.getSubGuilds().put(servers,loadSubGuild(servers,guildID));
                 }
-                getGuildList().put(guilRealName,xsGuilds);
+                getGuildList().put(guildRealName,xsGuilds);
                 //core.getPlugin().getLogger().info("---------------------");
             }
 
             resultSet.close();
+            preparedStatement.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeGuildFromDatabase(XSGuilds xsGuilds) {
+        try {
+            Connection connection = DriverManager.getConnection(XSDatabaseHandler.getJdbcUrl(),
+                    XSDatabaseHandler.getUSER(),XSDatabaseHandler.getPASS());
+
+            String getAllGuild = "DELETE FROM xsguilds_bungee_main WHERE Guild = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(getAllGuild);
+            preparedStatement.setString(1, xsGuilds.getRealName());
+
+            for(String server : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                removeSubGuildFromDatabase(server, xsGuilds.getGuildID());
+            }
+
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            connection.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeSubGuildFromDatabase(String server,int id) {
+        try {
+            Connection connection = DriverManager.getConnection(XSDatabaseHandler.getJdbcUrl(),
+                    XSDatabaseHandler.getUSER(),XSDatabaseHandler.getPASS());
+
+            String getAllGuild = "DELETE FROM xsguilds_bungee_" + server + " WHERE Reference = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(getAllGuild);
+            preparedStatement.setInt(1,id);
+            preparedStatement.executeUpdate();
+
             preparedStatement.close();
             connection.close();
 

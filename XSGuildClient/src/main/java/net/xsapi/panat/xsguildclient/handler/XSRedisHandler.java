@@ -1,13 +1,17 @@
 package net.xsapi.panat.xsguildclient.handler;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.xsapi.panat.xsguildclient.config.mainConfig;
 import net.xsapi.panat.xsguildclient.core;
+import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class XSRedisHandler {
     public static String redisHost;
@@ -79,6 +83,19 @@ public class XSRedisHandler {
 
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.GET_GUILD.toString())) {
                                 XSGuildsHandler.loadGuildData(arguments);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPDATED.toString())) {
+                                String server = arguments.split(";")[0];
+                                String jsonGuild = arguments.split(";")[1];
+                                Gson gson = new Gson();
+                                XSGuilds xsGuilds = gson.fromJson(jsonGuild, XSGuilds.class);
+                                XSGuildsHandler.getGuildList().put(xsGuilds.getGuildRealName(),xsGuilds);
+                                Bukkit.broadcastMessage("UPDATED GUILD DATA TO SERVER");
+                                if(Bukkit.getPlayer(xsGuilds.getLeader()) != null) {
+                                    XSGuildsHandler.getPlayers().put(xsGuilds.getLeader(),server+"<SPLIT>"+xsGuilds.getGuildRealName());
+                                    Bukkit.broadcastMessage("PLAYER ONLINE UPDATED TO " + server+"<SPLIT>"+xsGuilds.getGuildRealName());
+                                }
+
+
                             }
                         }
                     }

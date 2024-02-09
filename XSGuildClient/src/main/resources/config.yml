@@ -5,6 +5,8 @@ redis:
 
 configuration:
   server: lobby/01
+  min_length: 3
+  max_length: 8
   format:
     nonGuild: "<dark_gray>(<red>ไม่มีกิลด์<dark_gray>)"
     default: "<dark_gray>(<green><bold>Lv.</bold>%guild_level% <white>%guild_name%<dark_gray>)"

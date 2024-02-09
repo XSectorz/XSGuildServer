@@ -24,6 +24,7 @@ public final class core extends JavaPlugin {
         plugin = this;
 
         XSHandler.initSystem();
+        XSHandler.loadOnlinePlayerData();
 
     }
 

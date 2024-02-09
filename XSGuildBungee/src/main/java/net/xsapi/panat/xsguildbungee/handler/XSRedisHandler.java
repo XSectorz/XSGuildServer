@@ -3,6 +3,7 @@ package net.xsapi.panat.xsguildbungee.handler;
 import com.google.gson.Gson;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
+import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
 import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
@@ -70,6 +71,14 @@ public class XSRedisHandler {
                                 String guildRealName = arguments.split(";")[1];
                                 String guildName = arguments.split(";")[2];
                                 XSDatabaseHandler.createGuild(guildRealName,guildName,leader);
+                                Gson gson = new Gson();
+                                String guildJson = gson.toJson(XSGuildsHandler.getGuildList().get(guildRealName));
+                                core.getPlugin().getLogger().info(guildJson);
+                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATED+"<SPLIT>"+servers+";"+guildJson);
+                                    }
+                                }
                                  //core.getPlugin().getLogger().info("Create guild " + guildName);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.REQ_DATA.toString())) {
                                 String server = arguments.split(";")[0];
@@ -94,8 +103,18 @@ public class XSRedisHandler {
                                 Gson gson = new Gson();
 
                                 String guildJson = gson.toJson(XSGuildsHandler.getGuildList());
-                                core.getPlugin().getLogger().info(guildJson);
+                                //core.getPlugin().getLogger().info(guildJson);
                                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.GET_GUILD+"<SPLIT>" + guildJson);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.DISBAND.toString())) {
+                                String server = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                XSGuildsHandler.removeGuildFromDatabase(xsGuilds);
+                                XSGuildsHandler.getPlayers().remove(xsGuilds.getLeader());
+                                XSGuildsHandler.getGuildList().remove(guild);
+                                core.getPlugin().getLogger().info("REMOVED " + guild);
+
                             }
 
                         }

@@ -38,7 +38,8 @@ public class XSDatabaseHandler {
             + "id INT PRIMARY KEY AUTO_INCREMENT, "
             + "Guild VARCHAR(32), "
             + "GuildName TEXT, "
-            + "Players TEXT"
+            + "Players TEXT, "
+            + "GuildLevel INT"
             + ")";
 
     private final static String SUB_SQL_QUERY = " ("
@@ -110,13 +111,14 @@ public class XSDatabaseHandler {
         }
     }
     private static void createMainGuildServer(Connection connection,String guild,String guildName,String leader) {
-        String insertQuery = "INSERT INTO " + "xsguilds_bungee_main" + " (Guild, GuildName, Players) "
-                + "VALUES (?, ?, ?)";
+        String insertQuery = "INSERT INTO " + "xsguilds_bungee_main" + " (Guild, GuildName, Players, GuildLevel) "
+                + "VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatementInsert = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatementInsert.setString(1, guild);
             preparedStatementInsert.setString(2, guildName);
             preparedStatementInsert.setString(3, "[LEADER:" + leader + "]");
+            preparedStatementInsert.setInt(4, 1);
             preparedStatementInsert.executeUpdate();
 
             XSGuildsHandler.getPlayers().put(leader,guild); //guild = guild real name
@@ -128,6 +130,7 @@ public class XSDatabaseHandler {
                         //core.getPlugin().getLogger().info("CREATE : " + servers);
                         createSubGuildServer(connection, servers, id);
                     }
+                    XSGuildsHandler.createTemplateData(id,guild,guildName,leader);
                 }
             }
         } catch (SQLException e) {

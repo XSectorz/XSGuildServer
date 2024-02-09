@@ -9,6 +9,7 @@ import net.xsapi.panat.xsguildclient.listener.leaveEvent;
 import net.xsapi.panat.xsguildclient.placeholder.XSPlaceholders;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 
 public class XSHandler {
@@ -38,6 +39,12 @@ public class XSHandler {
     private static void registerPlaceholder() {
         xsPlaceholders = new XSPlaceholders();
         xsPlaceholders.register();
+    }
+
+    public static void loadOnlinePlayerData() {
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.REQ_DATA+"<SPLIT>" + XSHandler.getServername() + ";" + p.getName());
+        }
     }
 
     public static void unregisterPlaceholder() {
