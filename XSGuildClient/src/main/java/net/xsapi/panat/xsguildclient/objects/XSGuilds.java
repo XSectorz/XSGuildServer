@@ -14,7 +14,7 @@ public class XSGuilds {
     public String guildRealName;
     public HashMap<String,String> members = new HashMap<>();
     public HashMap<String,XSSubGuilds> subGuilds = new HashMap<>();
-
+    public HashMap<String,Long> pendingInvite = new HashMap<>();
     public String leader;
     public ArrayList<String> subleader;
 
@@ -23,6 +23,10 @@ public class XSGuilds {
         this.guildName = guildName;
         this.guildLevel = guildLevel;
         this.guildRealName = guildRealName;
+    }
+
+    public HashMap<String, Long> getPendingInvite() {
+        return pendingInvite;
     }
 
     public String getGuildRealName() {

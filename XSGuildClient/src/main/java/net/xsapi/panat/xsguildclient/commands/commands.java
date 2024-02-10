@@ -105,9 +105,18 @@ public class commands implements CommandExecutor {
                             return false;
                         }
 
+                        if(XSGuildsHandler.getPlayers().containsKey(playerName)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("other_already_in_guild"));
+                            return false;
+                        }
+
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.INVITE+"<SPLIT>"+XSHandler.getServername()+";"+playerName+";"+guild+";"+p.getName());
                         return true;
 
+                    } else if(args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("decline")) {
+                        String guildName = args[1];
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.INVITE_RESPOND+"<SPLIT>"+args[0]+";"+guildName+";"+p.getName());
+                        return true;
                     }
                 }
             }

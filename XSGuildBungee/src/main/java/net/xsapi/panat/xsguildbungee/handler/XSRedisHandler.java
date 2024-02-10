@@ -122,13 +122,56 @@ public class XSRedisHandler {
                                 String guild = arguments.split(";")[2];
                                 String sender = arguments.split(";")[3];
 
-                                ProxiedPlayer p = core.getPlugin().getProxy().getPlayer(player);
-                                if(p == null || !p.isConnected()) {
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+                                if(target == null || !target.isConnected()) {
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>NULL_PLAYER;" + sender);
                                 } else {
-                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>SENT;" + sender+";"+player);
+                                    XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                                    if(xsGuilds.getPendingInvite().containsKey(player)) {
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>ALREADY_SENT;" + sender+";"+player);
+                                    } else {
+                                        xsGuilds.getPendingInvite().put(player,System.currentTimeMillis());
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>SENT;" + sender+";"+player);
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                                XSDATA_TYPE.INVITE_GET+"<SPLIT>"+guild+";"+player);
+                                    }
                                 }
 
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.INVITE_RESPOND.toString())) {
+                                String respondType = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+                                String player = arguments.split(";")[2];
+
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+
+                                if(!XSGuildsHandler.getGuildList().containsKey(guild)) {
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                            XSDATA_TYPE.INVITE_RESPOND_RETURN+"<SPLIT>GUILD_NULL;"+player);
+                                } else {
+                                    XSGuilds xsGuilds = XSGuildsHandler.guildList.get(guild);
+
+                                    if(!xsGuilds.getPendingInvite().containsKey(player)) {
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                                XSDATA_TYPE.INVITE_RESPOND_RETURN+"<SPLIT>GUILD_NOT_INVITE;"+player);
+                                    } else {
+                                        if(respondType.equalsIgnoreCase("accept")) {
+
+                                        } else if(respondType.equalsIgnoreCase("decline")) {
+
+                                            ProxiedPlayer guildLeader = core.getPlugin().getProxy().getPlayer(xsGuilds.getLeader());
+
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                                    XSDATA_TYPE.INVITE_RESPOND_RETURN+"<SPLIT>DECLINE;"+player); //send to player that decline
+
+                                            if(guildLeader != null && guildLeader.isConnected()) { //respond to leader
+                                                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+guildLeader.getServer().getInfo().getName(),
+                                                        XSDATA_TYPE.INVITE_RESPOND_RETURN+"<SPLIT>DECLINE_FROM;"+player+";"+guildLeader);
+                                            }
+                                            xsGuilds.getPendingInvite().remove(player);
+                                        }
+                                    }
+                                }
                             }
 
                         }

@@ -3,6 +3,7 @@ package net.xsapi.panat.xsguildbungee.objects;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class XSGuilds {
@@ -14,6 +15,8 @@ public class XSGuilds {
     public HashMap<String,String> members = new HashMap<>();
     public HashMap<String,XSSubGuilds> subGuilds = new HashMap<>();
 
+    public HashMap<String,Long> pendingInvite = new HashMap<>();
+
     public String leader;
     public ArrayList<String> subleader;
 
@@ -22,6 +25,10 @@ public class XSGuilds {
         this.guildName = guildName;
         this.guildLevel = guildLevel;
         this.guildRealName = guildRealName;
+    }
+
+    public HashMap<String, Long> getPendingInvite() {
+        return pendingInvite;
     }
 
     public String getGuildRealName() {

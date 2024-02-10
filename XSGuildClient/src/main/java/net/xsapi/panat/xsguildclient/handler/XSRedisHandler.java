@@ -2,7 +2,10 @@ package net.xsapi.panat.xsguildclient.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.xsapi.panat.xsguildclient.config.mainConfig;
+import net.xsapi.panat.xsguildclient.config.messagesConfig;
 import net.xsapi.panat.xsguildclient.core;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
@@ -107,9 +110,55 @@ public class XSRedisHandler {
                                     } else if(result.equalsIgnoreCase("SENT")) {
                                         String targetName = arguments.split(";")[2];
                                         sender.sendMessage(XSUtils.decodeTextFromConfig("invite_send").replace("%player_name%",targetName));
+                                    } else if(result.equalsIgnoreCase("ALREADY_SENT")) {
+                                        sender.sendMessage(XSUtils.decodeTextFromConfig("already_sent"));
                                     }
                                 } catch (Exception ignored) {
 
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.INVITE_GET.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String player = arguments.split(";")[1];
+                                try {
+                                    Player target = Bukkit.getPlayer(player);
+                                    assert target != null;
+                                    Audience targetAudience = (Audience) target;
+
+                                    for(String msg : messagesConfig.customConfig.getStringList("system.get_invite")) {
+                                        msg = msg.replace("%guild_name%",guild);
+                                        targetAudience.sendMessage(MiniMessage.builder().build().deserialize(msg));
+                                    }
+
+                                } catch (Exception ignored) {
+
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.INVITE_RESPOND_RETURN.toString())) {
+                                String typeResond = arguments.split(";")[0];
+                                String player = arguments.split(";")[1];
+
+                                if(typeResond.equalsIgnoreCase("DECLINE_FROM")) {
+                                    String leader = arguments.split(";")[2];
+                                    try {
+                                        Player leaderTarget = Bukkit.getPlayer(leader);
+                                        assert leaderTarget != null;
+                                        leaderTarget.sendMessage(XSUtils.decodeTextFromConfig("decline_invite").replace("%player_name%",player));
+                                    } catch (Exception ignored) {
+
+                                    }
+                                } else {
+                                    try {
+                                        Player target = Bukkit.getPlayer(player);
+                                        assert target != null;
+                                        if(typeResond.equalsIgnoreCase("GUILD_NULL")) {
+                                            target.sendMessage(XSUtils.decodeTextFromConfig("guild_null"));
+                                        } else if(typeResond.equalsIgnoreCase("GUILD_NOT_INVITE")) {
+                                            target.sendMessage(XSUtils.decodeTextFromConfig("guild_not_invite"));
+                                        } else if(typeResond.equalsIgnoreCase("DECLINE")) {
+                                            target.sendMessage(XSUtils.decodeTextFromConfig("decline_guild"));
+                                        }
+                                    } catch (Exception ignored) {
+
+                                    }
                                 }
                             }
                         }
