@@ -1,10 +1,12 @@
 package net.xsapi.panat.xsguildbungee.handler;
 
+import com.google.gson.Gson;
 import net.md_5.bungee.api.ChatColor;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
 import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
 import net.xsapi.panat.xsguildbungee.objects.XSSubGuilds;
+import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -42,6 +44,17 @@ public class XSGuildsHandler {
         getGuildList().put(guildRealName,xsGuilds);
     }
 
+    public static void forceLoad() {
+
+        for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+            for(String subserver : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                Gson gson = new Gson();
+                String guildJson = gson.toJson(XSGuildsHandler.getGuildList());
+                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subserver, XSDATA_TYPE.FORCE_LOAD_ALL+"<SPLIT>"+guildJson);
+            }
+        }
+    }
+
     public static void loadData() {
         try {
             Connection connection = DriverManager.getConnection(XSDatabaseHandler.getJdbcUrl(),
@@ -68,6 +81,7 @@ public class XSGuildsHandler {
                 members = members.replace("[","").replace("]","");
 
                 for(String player : members.split(",")) {
+                    player = player.replace(" ", "");
                     String rank = player.split(":")[0];
                     String name = player.split(":")[1];
 

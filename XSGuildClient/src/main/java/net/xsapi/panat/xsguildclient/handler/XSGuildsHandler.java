@@ -30,12 +30,12 @@ public class XSGuildsHandler {
         HashMap<String, XSGuilds> guildList = gson.fromJson(json, new TypeToken<HashMap<String, XSGuilds>>(){}.getType());
 
         for (Map.Entry<String, XSGuilds> guild : guildList.entrySet()) {
-            Bukkit.getLogger().info("GUILD: " + guild.getKey());
-            Bukkit.getLogger().info("DATA: ");
+            //Bukkit.getLogger().info("GUILD: " + guild.getKey());
+            //Bukkit.getLogger().info("DATA: ");
             for (Map.Entry<String, XSSubGuilds> subguild : guild.getValue().getSubGuilds().entrySet()) {
-                Bukkit.getLogger().info("SERVER: " + subguild.getValue().getSubServer());
-                Bukkit.getLogger().info("LEVEL: " + subguild.getValue().getLevel());
-                Bukkit.getLogger().info("TECH: " + subguild.getValue().getTech());
+                //Bukkit.getLogger().info("SERVER: " + subguild.getValue().getSubServer());
+                //Bukkit.getLogger().info("LEVEL: " + subguild.getValue().getLevel());
+                //Bukkit.getLogger().info("TECH: " + subguild.getValue().getTech());
             }
             Bukkit.getLogger().info("--------------------------");
             getGuildList().put(guild.getKey(),guild.getValue());

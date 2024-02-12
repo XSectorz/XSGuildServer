@@ -3,8 +3,12 @@ package net.xsapi.panat.xsguildbungee.handler;
 import net.md_5.bungee.api.ChatColor;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
+import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
+import net.xsapi.panat.xsguildbungee.objects.XSSubGuilds;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class XSDatabaseHandler {
 
@@ -145,6 +149,43 @@ public class XSDatabaseHandler {
             preparedStatementInsert.setInt(1, ref);
             preparedStatementInsert.setInt(2, 1);
             preparedStatementInsert.setString(3, "");
+            preparedStatementInsert.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateMainGuild(Connection connection,XSGuilds xsGuilds) {
+        String updateQuery ="UPDATE xsguilds_bungee_main" + " SET Players = ?, GuildLevel = ? WHERE id = ?";
+
+        ArrayList<String> members = new ArrayList<>();
+
+        for(Map.Entry<String,String> member : xsGuilds.getMembers().entrySet()) {
+            members.add(member.getValue()+":"+member.getKey());
+        }
+
+        try (PreparedStatement preparedStatementInsert = connection.prepareStatement(updateQuery)) {
+            preparedStatementInsert.setString(1, members.toString());
+            preparedStatementInsert.setInt(2, xsGuilds.getGuildLevel());
+            preparedStatementInsert.setInt(3, xsGuilds.getGuildID());
+            preparedStatementInsert.executeUpdate();
+
+            for (String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(servers);
+                updateSubGuild(connection,servers,xsSubGuilds.getLevel(),xsSubGuilds.getTech(),xsGuilds.getGuildID());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void updateSubGuild(Connection connection,String subGroup,int level,String tech,int ref) {
+        String updateQuery = "UPDATE " + ("xsguilds_bungee_"+subGroup) + " SET Level = ?, Tech = ? WHERE Reference = ?";
+
+        try (PreparedStatement preparedStatementInsert = connection.prepareStatement(updateQuery)) {
+            preparedStatementInsert.setInt(1, level);
+            preparedStatementInsert.setString(2, tech);
+            preparedStatementInsert.setInt(3, ref);
             preparedStatementInsert.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

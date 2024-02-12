@@ -6,6 +6,7 @@ import net.xsapi.panat.xsguildbungee.handler.XSDatabaseHandler;
 import net.xsapi.panat.xsguildbungee.handler.XSGuildsHandler;
 import net.xsapi.panat.xsguildbungee.handler.XSHandler;
 import net.xsapi.panat.xsguildbungee.handler.XSRedisHandler;
+import net.xsapi.panat.xsguildbungee.utils.tasks.task_save;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ public final class core extends Plugin {
         XSHandler.initSystem();
         XSDatabaseHandler.createSQLDatabase();
         XSGuildsHandler.loadData();
+        XSGuildsHandler.forceLoad();
 
         /*getProxy().getScheduler().schedule(plugin, new Runnable() {
             @Override
@@ -40,6 +42,7 @@ public final class core extends Plugin {
                 getLogger().info("REPEATING....");
             }
         }, 0L, 10, TimeUnit.SECONDS);*/
+        new task_save();
 
     }
 

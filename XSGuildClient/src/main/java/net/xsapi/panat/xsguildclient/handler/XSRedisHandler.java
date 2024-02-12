@@ -182,6 +182,13 @@ public class XSRedisHandler {
                                 Gson gson = new Gson();
                                 XSGuilds xsGuilds = gson.fromJson(jsonGuild, XSGuilds.class);
                                 XSGuildsHandler.getGuildList().replace(xsGuilds.getGuildRealName(),xsGuilds);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.FORCE_LOAD_ALL.toString())) {
+                                XSGuildsHandler.getGuildList().clear();
+                                XSGuildsHandler.getPlayers().clear();
+                                XSGuildsHandler.loadGuildData(arguments);
+                                for(Player p : Bukkit.getOnlinePlayers()) {
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.REQ_DATA+"<SPLIT>" + XSHandler.getServername() + ";" + p.getName());
+                                }
                             }
                         }
                     }
