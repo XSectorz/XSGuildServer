@@ -167,11 +167,8 @@ public class XSRedisHandler {
                                         } else if(typeResond.equalsIgnoreCase("ACCEPT")) {
                                             String server = arguments.split(";")[2];
                                             String guild = arguments.split(";")[3];
-
                                             XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild);
                                             target.sendMessage(XSUtils.decodeTextFromConfig("accept_invite"));
-
-
                                         }
                                     } catch (Exception ignored) {
 
@@ -188,6 +185,16 @@ public class XSRedisHandler {
                                 XSGuildsHandler.loadGuildData(arguments);
                                 for(Player p : Bukkit.getOnlinePlayers()) {
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.REQ_DATA+"<SPLIT>" + XSHandler.getServername() + ";" + p.getName());
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.KICK_RESPOND.toString())) {
+                                String player = arguments.split(";")[0];
+                                try {
+                                    Player target = Bukkit.getPlayer(player);
+                                    assert target != null;
+                                    target.sendMessage(XSUtils.decodeTextFromConfig("guild_kick_target"));
+                                    XSGuildsHandler.getPlayers().remove(player);
+                                } catch (Exception ignored) {
+
                                 }
                             }
                         }

@@ -32,9 +32,7 @@ public class commands implements CommandExecutor {
                         p.sendMessage(XSUtils.decodeText(messagesConfig.customConfig.getString("system.helps."+ section)));
                     }
                 } else if(args.length == 1) {
-                    if(args[0].equalsIgnoreCase("leave")) {
-
-                    } else if(args[0].equalsIgnoreCase("disband")) {
+                    if(args[0].equalsIgnoreCase("disband")) {
 
                         if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
@@ -62,6 +60,23 @@ public class commands implements CommandExecutor {
                             return false;
                         }
 
+                    } else if(args[0].equalsIgnoreCase("leave")) {
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                        if(xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("guild_leave_leader"));
+                            return false;
+                        }
+
+                        p.sendMessage(XSUtils.decodeTextFromConfig("guild_leave"));
+                        XSGuildsHandler.getPlayers().remove(p.getName());
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.LEAVE_GUILD +"<SPLIT>" + p.getName() + ";" + guild);
                     }
                 } else if(args.length == 2) {
                     if(args[0].equalsIgnoreCase("create")) {
@@ -117,6 +132,36 @@ public class commands implements CommandExecutor {
                         String guildName = args[1];
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.INVITE_RESPOND+"<SPLIT>"+args[0]+";"+guildName+";"+p.getName());
                         return true;
+                    }if(args[0].equalsIgnoreCase("kick")) {
+                        String target = args[1];
+
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                        if(!xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                            return false;
+                        }
+
+                        if(!xsGuilds.getMembers().containsKey(target)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("guild_kick_null"));
+                            return false;
+                        }
+
+                        if(target.equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("guild_kick_self"));
+                            return false;
+                        }
+
+                        p.sendMessage(XSUtils.decodeTextFromConfig("guild_kick_sender").replace("%player_name%",target));
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.KICK_REQUEST+"<SPLIT>"+guild+";"+target);
+                        return true;
+
                     }
                 }
             }

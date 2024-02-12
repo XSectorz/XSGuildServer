@@ -192,6 +192,42 @@ public class XSRedisHandler {
 
                                     }
                                 }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.LEAVE_GUILD.toString())) {
+                                String player = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+
+                                XSGuildsHandler.getPlayers().remove(player);
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                xsGuilds.getMembers().remove(player);
+
+                                Gson gson = new Gson();
+                                String guildJson = gson.toJson(xsGuilds);
+                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_GUILD+"<SPLIT>"+guildJson);
+                                    }
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.KICK_REQUEST.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String player = arguments.split(";")[1];
+
+                                XSGuildsHandler.getPlayers().remove(player);
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                xsGuilds.getMembers().remove(player);
+
+                                Gson gson = new Gson();
+                                String guildJson = gson.toJson(xsGuilds);
+                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_GUILD+"<SPLIT>"+guildJson);
+                                    }
+                                }
+
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+                                if(target != null && target.isConnected()) { //respond to target
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                            XSDATA_TYPE.KICK_RESPOND+"<SPLIT>"+player);
+                                }
                             }
 
                         }

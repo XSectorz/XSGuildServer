@@ -29,6 +29,12 @@ system:
   decline_guild: "%prefix%<white>ทำการปฏิเสธคำเชิญกิลด์เรียบร้อยแล้ว"
   guild_null: "%prefix%<color:#C01631>ไม่พบกิลด์ดังกล่าวในระบบ"
   guild_not_invite: "%prefix%<color:#C01631>กิลด์ดังกล่าวไม่ได้เชิญคุณ"
+  guild_leave: "%prefix%<white>คุณทำการออกจากกิลด์เรียบร้อยแล้ว"
+  guild_leave_leader: "%prefix%<color:#C01631>ไม่สามารถออกจากกิลด์ได้เนื่องจากคุณเป็นหัวหน้ากิลด์"
+  guild_kick_target: "%prefix%<white>คุณถูก <color:#C01631>ขับไล่<white> ออกจากกิลด์เรียบร้อยแล้ว"
+  guild_kick_sender: "%prefix%<white>ทำการเตะผู้เล่น <color:#C01631>%player_name%<white> ออกจากกิลด์เรียบร้อยแล้ว"
+  guild_kick_null: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวไม่ได้อยู่ในกิลด์ของคุณ"
+  guild_kick_self: "%prefix%<color:#C01631>คุณไม่สามารถเตะตัวเองได้"
   get_invite:
     - "<dark_gray>------------------------------------"
     - "<color:#D1A81D>✉ <white>คุณได้รับคำเชิญให้เข้าร่วมกิลด์ <color:#4AD842>%guild_name% <white>คุณจะตอบรับหรือไม่"
