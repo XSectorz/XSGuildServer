@@ -21,6 +21,15 @@ public class XSGuildsHandler {
         return players;
     }
 
+    public static String getServer(String playerSubserver) {
+        for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+            if(mainConfig.getConfig().getStringList("guilds-group." + servers).contains(playerSubserver)) {
+                return servers;
+            }
+        }
+        return "";
+    }
+
     public static void createTemplateData(int id,String guildRealName,String guildName,String leader) {
         XSGuilds xsGuilds = new XSGuilds(id,guildRealName,guildName,1);
 

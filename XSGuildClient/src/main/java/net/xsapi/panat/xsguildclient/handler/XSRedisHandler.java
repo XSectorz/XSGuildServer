@@ -97,7 +97,7 @@ public class XSRedisHandler {
                                 Bukkit.broadcastMessage("UPDATED GUILD DATA TO SERVER");
                                 if(Bukkit.getPlayer(xsGuilds.getLeader()) != null) {
                                     XSGuildsHandler.getPlayers().put(xsGuilds.getLeader(),server+"<SPLIT>"+xsGuilds.getGuildRealName());
-                                    Bukkit.broadcastMessage("PLAYER ONLINE UPDATED TO " + server+"<SPLIT>"+xsGuilds.getGuildRealName());
+                                    //Bukkit.broadcastMessage("PLAYER ONLINE UPDATED TO " + server+"<SPLIT>"+xsGuilds.getGuildRealName());
                                 }
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.INVITE_RETURN.toString())) {
                                 String result = arguments.split(";")[0];
@@ -145,7 +145,16 @@ public class XSRedisHandler {
                                     } catch (Exception ignored) {
 
                                     }
-                                } else {
+                                } else if(typeResond.equalsIgnoreCase("ACCEPT_FROM")) {
+                                    String leader = arguments.split(";")[2];
+                                    try {
+                                        Player leaderTarget = Bukkit.getPlayer(leader);
+                                        assert leaderTarget != null;
+                                        leaderTarget.sendMessage(XSUtils.decodeTextFromConfig("accept_from").replace("%player_name%",player));
+                                    } catch (Exception ignored) {
+
+                                    }
+                                } else  {
                                     try {
                                         Player target = Bukkit.getPlayer(player);
                                         assert target != null;
@@ -155,11 +164,24 @@ public class XSRedisHandler {
                                             target.sendMessage(XSUtils.decodeTextFromConfig("guild_not_invite"));
                                         } else if(typeResond.equalsIgnoreCase("DECLINE")) {
                                             target.sendMessage(XSUtils.decodeTextFromConfig("decline_guild"));
+                                        } else if(typeResond.equalsIgnoreCase("ACCEPT")) {
+                                            String server = arguments.split(";")[2];
+                                            String guild = arguments.split(";")[3];
+
+                                            XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild);
+                                            target.sendMessage(XSUtils.decodeTextFromConfig("accept_invite"));
+
+
                                         }
                                     } catch (Exception ignored) {
 
                                     }
                                 }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPDATE_GUILD.toString())) {
+                                String jsonGuild = arguments.split(";")[0];
+                                Gson gson = new Gson();
+                                XSGuilds xsGuilds = gson.fromJson(jsonGuild, XSGuilds.class);
+                                XSGuildsHandler.getGuildList().replace(xsGuilds.getGuildRealName(),xsGuilds);
                             }
                         }
                     }
