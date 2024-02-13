@@ -118,6 +118,10 @@ public class XSRedisHandler {
                                         senderAudience.sendMessage(MiniMessage.builder().build().deserialize(text));
                                     } else if(result.equalsIgnoreCase("ALREADY_SENT")) {
                                         sender.sendMessage(XSUtils.decodeTextFromConfig("already_sent"));
+                                    } else if(result.equalsIgnoreCase("ALREADY_IN_GUILD")) {
+                                        sender.sendMessage(XSUtils.decodeTextFromConfig("already_in_your_guild"));
+                                    } else if(result.equalsIgnoreCase("ALREADY_IN_OTHER_GUILD")) {
+                                        sender.sendMessage(XSUtils.decodeTextFromConfig("already_in_other_guild"));
                                     }
                                 } catch (Exception ignored) {
 

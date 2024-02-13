@@ -128,16 +128,26 @@ public class XSRedisHandler {
                                 if(target == null || !target.isConnected()) {
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>NULL_PLAYER;" + sender);
                                 } else {
-                                    XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
 
-                                    if(xsGuilds.getPendingInvite().containsKey(player)) {
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>ALREADY_SENT;" + sender+";"+player);
+                                    if(XSGuildsHandler.getPlayers().containsKey(player)) {
+
+                                        if(XSGuildsHandler.getPlayers().get(player).equalsIgnoreCase(guild)) {
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>ALREADY_IN_GUILD;" + sender+";"+player);
+                                        } else {
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>ALREADY_IN_OTHER_GUILD;" + sender+";"+player);
+                                        }
                                     } else {
-                                        xsGuilds.getPendingInvite().put(player,System.currentTimeMillis());
-                                        XSGuildsHandler.updateToAllServer(xsGuilds);
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>SENT;" + sender+";"+player);
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
-                                                XSDATA_TYPE.INVITE_GET+"<SPLIT>"+guild+";"+player);
+                                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                                        if(xsGuilds.getPendingInvite().containsKey(player)) {
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>ALREADY_SENT;" + sender+";"+player);
+                                        } else {
+                                            xsGuilds.getPendingInvite().put(player,System.currentTimeMillis());
+                                            XSGuildsHandler.updateToAllServer(xsGuilds);
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>SENT;" + sender+";"+player);
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                                    XSDATA_TYPE.INVITE_GET+"<SPLIT>"+guild+";"+player);
+                                        }
                                     }
                                 }
 

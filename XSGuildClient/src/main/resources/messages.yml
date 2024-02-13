@@ -26,6 +26,8 @@ system:
   invite_send: "%prefix%<white>ทำการส่ง <green>คำเชิญ<white> ไปยัง <green>%player_name%<white> เรียบร้อยแล้ว <click:run_command:/xsguild uninvite %player_name%><hover:show_text:'<red>คลิกเพื่อยกเลิกคำเชิญ'><dark_gray>[<red>✖ ยกเลิกคำเชิญ<dark_gray>]</hover></click>"
   other_already_in_guild: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวอยู่ในกิลด์อยู่แล้ว"
   already_sent: "%prefix%<color:#C01631>คุณทำการเชิญผู้เล่นดังกล่าวไปแล้วกรุณารอการตอบกลับ"
+  already_in_your_guild: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวอยู่ในกิลด์ของคุณอยู่แล้ว"
+  already_in_other_guild: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวอยู่ในกิลด์อื่นอยู่แล้ว"
   accept_invite: "%prefix%<white>คุณทำการยอมรับคำเชิญเข้าร่วมกิลด์เรียบร้อยแล้ว"
   accept_from: "%prefix%<white>ผู้เล่น <color:#4AD842>%player_name% <white>ได้ยอมรับเข้าร่วมกิลด์เรียบร้อยแล้ว"
   decline_invite: "%prefix%<white>ผู้เล่น <color:#4AD842>%player_name% <white>ทำการ <red>ปฏิเสธ<white> ข้อเสนอคำเชิญ"

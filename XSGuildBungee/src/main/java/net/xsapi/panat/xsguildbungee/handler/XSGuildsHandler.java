@@ -64,6 +64,7 @@ public class XSGuildsHandler {
             xsGuilds.getSubGuilds().put(servers,xsSubGuilds);
         }
         getGuildList().put(guildRealName,xsGuilds);
+        getPlayers().put(leader,guildName);
     }
 
     public static void forceLoad() {
@@ -86,7 +87,7 @@ public class XSGuildsHandler {
             PreparedStatement preparedStatement = connection.prepareStatement(getAllGuild);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
 
                 int guildID = resultSet.getInt("id");
                 String guildRealName = resultSet.getString("Guild");
@@ -98,6 +99,7 @@ public class XSGuildsHandler {
                 //core.getPlugin().getLogger().info(guildName);
                 //core.getPlugin().getLogger().info(members);
                 //core.getPlugin().getLogger().info("---------------");
+
 
                 XSGuilds xsGuilds = new XSGuilds(guildID,guildRealName,guildName,guildLevel);
                 xsGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.main.level_"+guildLevel));
