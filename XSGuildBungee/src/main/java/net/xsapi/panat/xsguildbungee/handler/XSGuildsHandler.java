@@ -84,6 +84,7 @@ public class XSGuildsHandler {
                 String guildRealName = resultSet.getString("Guild");
                 String guildName = resultSet.getString("GuildName");
                 String members = resultSet.getString("Players");
+                double balance = resultSet.getDouble("Balance");
                 int guildLevel = resultSet.getInt("GuildLevel");
                 //core.getPlugin().getLogger().info(guildID+"");
                 //core.getPlugin().getLogger().info(guildName);
@@ -92,6 +93,7 @@ public class XSGuildsHandler {
 
                 XSGuilds xsGuilds = new XSGuilds(guildID,guildRealName,guildName,guildLevel);
                 xsGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.main.level_"+guildLevel));
+                xsGuilds.setBalance(balance);
 
                 members = members.replace("[","").replace("]","");
 
@@ -110,7 +112,7 @@ public class XSGuildsHandler {
                 }
 
                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
-                    XSSubGuilds xsSubGuilds =   loadSubGuild(servers,guildID);
+                    XSSubGuilds xsSubGuilds =  loadSubGuild(servers,guildID);
                     xsSubGuilds.setMaxBalance((mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.sub.level_"+guildLevel)));
                     xsGuilds.getSubGuilds().put(servers,xsSubGuilds);
                 }
@@ -187,12 +189,14 @@ public class XSGuildsHandler {
             if (resultSet.next()) {
                 int guildLevel = resultSet.getInt("Level");
                 String guildTech = resultSet.getString("Tech");
+                double guildBalance = resultSet.getDouble("Balance");
 
                // core.getPlugin().getLogger().info("SUB GUILD: " + server);
                // core.getPlugin().getLogger().info(guildLevel+"");
                // core.getPlugin().getLogger().info(guildTech);
                // core.getPlugin().getLogger().info("--------------------------");
                 xsSubGuilds = new XSSubGuilds(guildTech,guildLevel,server);
+                xsSubGuilds.setBalance(guildBalance);
             }
 
             resultSet.close();

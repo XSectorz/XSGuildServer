@@ -175,7 +175,7 @@ public class XSDatabaseHandler {
             preparedStatementInsert.setInt(4, xsGuilds.getGuildID());
             preparedStatementInsert.executeUpdate();
 
-            core.getPlugin().getLogger().info("Balance " + xsGuilds.getBalance());
+            //core.getPlugin().getLogger().info("Current Balance " + xsGuilds.getBalance());
 
             for (String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                 XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(servers);

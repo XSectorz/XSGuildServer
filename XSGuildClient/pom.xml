@@ -39,6 +39,7 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>D:\MinecraftServer\Server-Test\plugins\XSGuildClient-1.0-SNAPSHOT.jar</outputFile>
                         </configuration>
                     </execution>
                 </executions>

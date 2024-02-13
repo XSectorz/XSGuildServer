@@ -287,6 +287,7 @@ public class XSRedisHandler {
                                 double amount = Double.parseDouble(arguments.split(";")[1]);
                                 XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                                 xsGuilds.setBalance(xsGuilds.getBalance()+amount);
+                                core.getPlugin().getLogger().info("DEPOSIT CURRENT BALANCE: " + xsGuilds.getBalance());
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_POINTS.toString())) {
                                 String guild = arguments.split(";")[0];

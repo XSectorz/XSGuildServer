@@ -37,6 +37,7 @@ public class XSHandler {
         try {
             Connection connection = DriverManager.getConnection(XSDatabaseHandler.getJdbcUrl(),XSDatabaseHandler.getUSER(),XSDatabaseHandler.getPASS());
             for(Map.Entry<String, XSGuilds> guild : XSGuildsHandler.getGuildList().entrySet()) {
+               // core.getPlugin().getLogger().info("GUILD: " + guild.getKey() + " BAL " + guild.getValue().getBalance());
                 XSDatabaseHandler.updateMainGuild(connection,guild.getValue());
             }
         } catch (SQLException e) {
