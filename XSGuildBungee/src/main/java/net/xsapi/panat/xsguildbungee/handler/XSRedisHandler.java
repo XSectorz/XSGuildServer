@@ -115,7 +115,7 @@ public class XSRedisHandler {
                                 XSGuildsHandler.removeGuildFromDatabase(xsGuilds);
                                 XSGuildsHandler.getPlayers().remove(xsGuilds.getLeader());
                                 XSGuildsHandler.getGuildList().remove(guild);
-                                //core.getPlugin().getLogger().info("REMOVED " + guild);
+                                XSGuildsHandler.removeGuildToAllServer(guild);
 
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.INVITE.toString())) {
 
@@ -134,6 +134,7 @@ public class XSRedisHandler {
                                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>ALREADY_SENT;" + sender+";"+player);
                                     } else {
                                         xsGuilds.getPendingInvite().put(player,System.currentTimeMillis());
+                                        XSGuildsHandler.updateToAllServer(xsGuilds);
                                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>SENT;" + sender+";"+player);
                                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
                                                 XSDATA_TYPE.INVITE_GET+"<SPLIT>"+guild+";"+player);
@@ -151,7 +152,7 @@ public class XSRedisHandler {
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
                                             XSDATA_TYPE.INVITE_RESPOND_RETURN+"<SPLIT>GUILD_NULL;"+player);
                                 } else {
-                                    XSGuilds xsGuilds = XSGuildsHandler.guildList.get(guild);
+                                    XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
 
                                     if(!xsGuilds.getPendingInvite().containsKey(player)) {
                                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
@@ -164,13 +165,7 @@ public class XSRedisHandler {
                                             xsGuilds.getMembers().put(player,XSGUILD_POSITIONS.NEW_MEMBER.toString());
                                             XSGuildsHandler.getPlayers().put(player,guild);
 
-                                            Gson gson = new Gson();
-                                            String guildJson = gson.toJson(xsGuilds);
-                                            for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
-                                                for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
-                                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_GUILD+"<SPLIT>"+guildJson);
-                                                }
-                                            }
+                                            XSGuildsHandler.updateToAllServer(xsGuilds);
                                             String server = XSGuildsHandler.getServer(target.getServer().getInfo().getName());
                                             XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
                                                     XSDATA_TYPE.INVITE_RESPOND_RETURN+"<SPLIT>ACCEPT;"+player+";"+server+";"+guild); //send to player that decline
@@ -191,6 +186,7 @@ public class XSRedisHandler {
                                             }
                                         }
                                         xsGuilds.getPendingInvite().remove(player);
+                                        XSGuildsHandler.updateToAllServer(xsGuilds);
 
                                     }
                                 }
@@ -317,6 +313,20 @@ public class XSRedisHandler {
                                     XSGuildsHandler.updateToAllServer(xsGuilds);
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
                                             XSDATA_TYPE.WITHDRAW_COINS_RESPOND+"<SPLIT>"+player+";"+amount);
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UNINVITE.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String player = arguments.split(";")[1];
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                xsGuilds.getPendingInvite().remove(player);
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+
+                                if(target != null && target.isConnected()) { //respond to target
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                            XSDATA_TYPE.UNINVITE_RESPOND+"<SPLIT>"+player+";"+xsGuilds.getGuildRealName());
                                 }
                             }
 

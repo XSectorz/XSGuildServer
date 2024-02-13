@@ -179,6 +179,28 @@ public class commands implements CommandExecutor {
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.INVITE+"<SPLIT>"+XSHandler.getServername()+";"+playerName+";"+guild+";"+p.getName());
                         return true;
 
+                    } else if(args[0].equalsIgnoreCase("uninvite")) {
+                        String playerName = args[1];
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                        if(!(xsGuilds.getLeader().equalsIgnoreCase(p.getName()) || xsGuilds.getSubleader().contains(p.getName()))) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                            return false;
+                        }
+
+                        if(!xsGuilds.getPendingInvite().containsKey(playerName)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("uninvite_not_found"));
+                            return false;
+                        }
+                        p.sendMessage(XSUtils.decodeTextFromConfig("uninvite_success").replace("%player_name%",playerName));
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.UNINVITE+"<SPLIT>"+guild+";"+playerName);
+                        return true;
                     } else if(args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("decline")) {
                         String guildName = args[1];
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.INVITE_RESPOND+"<SPLIT>"+args[0]+";"+guildName+";"+p.getName());
@@ -329,12 +351,12 @@ public class commands implements CommandExecutor {
                 } else if(args.length == 3) { //xsguilds deposit <points/coins> <amount>
                      if(args[0].equalsIgnoreCase("deposit")) {
                          String type = args[1];
+                         if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                             p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                             return false;
+                         }
 
                          if(type.equalsIgnoreCase("points") || type.equalsIgnoreCase("coins")) {
-                             if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
-                                 p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
-                                 return false;
-                             }
 
                              double amount;
 
@@ -395,12 +417,12 @@ public class commands implements CommandExecutor {
 
                     } else if(args[0].equalsIgnoreCase("withdraw")) {
                          String type = args[1];
+                         if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                             p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                             return false;
+                         }
 
                          if(type.equalsIgnoreCase("points") || type.equalsIgnoreCase("coins")) {
-                             if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
-                                 p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
-                                 return false;
-                             }
 
                              double amount;
 

@@ -23,7 +23,7 @@ system:
   no_guild: "%prefix%<color:#C01631>คุณยังไม่มีกิลด์อยู่ไม่สามารถทำสิ่งนั้นได้"
   required_permission_to_do: "%prefix%<color:#C01631>คุณไม่มีสิทธิในการกระทำดังกล่าวเนื่องจากตำแหน่งในกิลด์ของคุณไม่เพียงพอ"
   null_player: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวไม่ออนไลน์"
-  invite_send: "%prefix%<white>ทำการส่ง <green>คำเชิญ<white> ไปยัง <green>%player_name%<white> เรียบร้อยแล้ว"
+  invite_send: "%prefix%<white>ทำการส่ง <green>คำเชิญ<white> ไปยัง <green>%player_name%<white> เรียบร้อยแล้ว <click:run_command:/xsguild uninvite %player_name%><hover:show_text:'<red>คลิกเพื่อยกเลิกคำเชิญ'><dark_gray>[<red>✖ ยกเลิกคำเชิญ<dark_gray>]</hover></click>"
   other_already_in_guild: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวอยู่ในกิลด์อยู่แล้ว"
   already_sent: "%prefix%<color:#C01631>คุณทำการเชิญผู้เล่นดังกล่าวไปแล้วกรุณารอการตอบกลับ"
   accept_invite: "%prefix%<white>คุณทำการยอมรับคำเชิญเข้าร่วมกิลด์เรียบร้อยแล้ว"
@@ -61,6 +61,9 @@ system:
   withdraw_points: "%prefix%<white>คุณได้รับ <color:#30D2EB>พ้อยต์<white> จำนวน <color:#30D2EB>%amount% <white> จากการถอนเรียบร้อยแล้ว"
   withdraw_coins: "%prefix%<white>คุณได้รับ <color:#F3C91F>เงิน<white> จำนวน <color:#F3C91F>%amount% <white> จากการถอนเรียบร้อยแล้ว"
   withdraw_cant_afford: "%prefix%<color:#C01631>ไม่สามารถถอนได้เนื่องจากยอดเงินในกิลด์ไม่เพียงพอ"
+  uninvite_not_found: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวไม่ได้ถูกคุณเชิญชวนตั้งแต่แรก"
+  uninvite_success: "%prefix%<white>ยกเลิกการเชิญ <color:#4AD842>%player_name%<white> เรียบร้อยแล้ว"
+  uninvite_target: "%prefix%<white>คุณถูกยกเลิกคำเชิญจากกิลด์ <color:#4AD842>%guild_name%<white> เรียบร้อยแล้ว"
   balance_check:
     - "<dark_gray>------------------------------------"
     - "<white>รายการบัญชีของกิลด์ <color:#4AD842>%guild_name%"

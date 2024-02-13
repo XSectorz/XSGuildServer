@@ -19,6 +19,7 @@ import redis.clients.jedis.JedisPubSub;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class XSRedisHandler {
     public static String redisHost;
@@ -111,7 +112,10 @@ public class XSRedisHandler {
                                         sender.sendMessage(XSUtils.decodeTextFromConfig("null_player"));
                                     } else if(result.equalsIgnoreCase("SENT")) {
                                         String targetName = arguments.split(";")[2];
-                                        sender.sendMessage(XSUtils.decodeTextFromConfig("invite_send").replace("%player_name%",targetName));
+                                        Audience senderAudience = (Audience) sender;
+                                        String text = Objects.requireNonNull(messagesConfig.customConfig.getString("system.invite_send")).replace("%prefix%",
+                                                Objects.requireNonNull(messagesConfig.customConfig.getString("system.prefix"))).replace("%player_name%",targetName);
+                                        senderAudience.sendMessage(MiniMessage.builder().build().deserialize(text));
                                     } else if(result.equalsIgnoreCase("ALREADY_SENT")) {
                                         sender.sendMessage(XSUtils.decodeTextFromConfig("already_sent"));
                                     }
@@ -257,6 +261,19 @@ public class XSRedisHandler {
                                 } catch (Exception ignored) {
 
                                 }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UNINVITE_RESPOND.toString())) {
+                                String player = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+                                try {
+                                    Player target = Bukkit.getPlayer(player);
+                                    assert target != null;
+                                    target.sendMessage(XSUtils.decodeTextFromConfig("uninvite_target").replace("%guild_name%",guild));
+                                } catch (Exception ignored) {
+
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.REMOVE_GUILD.toString())) {
+                                String guild = arguments.split(";")[0];
+                                XSGuildsHandler.getGuildList().remove(guild);
                             }
                         }
                     }

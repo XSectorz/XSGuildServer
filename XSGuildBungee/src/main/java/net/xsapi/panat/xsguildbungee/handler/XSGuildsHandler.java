@@ -43,6 +43,14 @@ public class XSGuildsHandler {
         }
     }
 
+    public static void removeGuildToAllServer(String guild) {
+        for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+            for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.REMOVE_GUILD+"<SPLIT>"+guild);
+            }
+        }
+    }
+
     public static void createTemplateData(int id,String guildRealName,String guildName,String leader) {
         XSGuilds xsGuilds = new XSGuilds(id,guildRealName,guildName,1);
 
