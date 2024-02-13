@@ -9,6 +9,7 @@ import net.xsapi.panat.xsguildclient.config.messagesConfig;
 import net.xsapi.panat.xsguildclient.core;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
+import net.xsapi.panat.xsguildclient.utils.XSGUILD_POSITIONS;
 import net.xsapi.panat.xsguildclient.utils.XSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -94,7 +95,7 @@ public class XSRedisHandler {
                                 Gson gson = new Gson();
                                 XSGuilds xsGuilds = gson.fromJson(jsonGuild, XSGuilds.class);
                                 XSGuildsHandler.getGuildList().put(xsGuilds.getGuildRealName(),xsGuilds);
-                                Bukkit.broadcastMessage("UPDATED GUILD DATA TO SERVER");
+                                //Bukkit.broadcastMessage("UPDATED GUILD DATA TO SERVER");
                                 if(Bukkit.getPlayer(xsGuilds.getLeader()) != null) {
                                     XSGuildsHandler.getPlayers().put(xsGuilds.getLeader(),server+"<SPLIT>"+xsGuilds.getGuildRealName());
                                     //Bukkit.broadcastMessage("PLAYER ONLINE UPDATED TO " + server+"<SPLIT>"+xsGuilds.getGuildRealName());
@@ -193,6 +194,41 @@ public class XSRedisHandler {
                                     assert target != null;
                                     target.sendMessage(XSUtils.decodeTextFromConfig("guild_kick_target"));
                                     XSGuildsHandler.getPlayers().remove(player);
+                                } catch (Exception ignored) {
+
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.TRANSFER_LEADER_RESPOND.toString())) {
+                                String player = arguments.split(";")[0];
+                                try {
+                                    Player target = Bukkit.getPlayer(player);
+                                    assert target != null;
+                                    target.sendMessage(XSUtils.decodeTextFromConfig("guild_transfer_target"));
+                                } catch (Exception ignored) {
+
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.PROMOTE_RESPOND.toString())) {
+                                String player = arguments.split(";")[0];
+                                String rank = arguments.split(";")[1].toLowerCase();
+                                try {
+                                    Player target = Bukkit.getPlayer(player);
+                                    assert target != null;
+
+                                    String nextRank = messagesConfig.customConfig.getString("system.ranks."+rank.toLowerCase());
+                                    String rankWithColor = XSUtils.decodeText(nextRank);
+                                    target.sendMessage(XSUtils.decodeTextFromConfig("promote_target").replace("%guild_rank%",rankWithColor));
+                                } catch (Exception ignored) {
+
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.DEMOTE_RESPOND.toString())) {
+                                String player = arguments.split(";")[0];
+                                String rank = arguments.split(";")[1].toLowerCase();
+                                try {
+                                    Player target = Bukkit.getPlayer(player);
+                                    assert target != null;
+
+                                    String nextRank = messagesConfig.customConfig.getString("system.ranks."+rank.toLowerCase());
+                                    String rankWithColor = XSUtils.decodeText(nextRank);
+                                    target.sendMessage(XSUtils.decodeTextFromConfig("demote_target").replace("%guild_rank%",rankWithColor));
                                 } catch (Exception ignored) {
 
                                 }

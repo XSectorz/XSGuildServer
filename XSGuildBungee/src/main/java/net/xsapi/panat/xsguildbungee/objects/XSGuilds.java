@@ -18,7 +18,7 @@ public class XSGuilds {
     public HashMap<String,Long> pendingInvite = new HashMap<>();
 
     public String leader;
-    public ArrayList<String> subleader;
+    public ArrayList<String> subleader = new ArrayList<>();
 
     public XSGuilds(int guildID,String guildRealName,String guildName,int guildLevel) {
         this.guildID = guildID;

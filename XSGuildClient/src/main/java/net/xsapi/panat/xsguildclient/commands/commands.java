@@ -7,6 +7,7 @@ import net.xsapi.panat.xsguildclient.handler.XSHandler;
 import net.xsapi.panat.xsguildclient.handler.XSRedisHandler;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
+import net.xsapi.panat.xsguildclient.utils.XSGUILD_POSITIONS;
 import net.xsapi.panat.xsguildclient.utils.XSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -132,7 +133,7 @@ public class commands implements CommandExecutor {
                         String guildName = args[1];
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.INVITE_RESPOND+"<SPLIT>"+args[0]+";"+guildName+";"+p.getName());
                         return true;
-                    }if(args[0].equalsIgnoreCase("kick")) {
+                    } else if(args[0].equalsIgnoreCase("kick")) {
                         String target = args[1];
 
                         if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
@@ -149,7 +150,7 @@ public class commands implements CommandExecutor {
                         }
 
                         if(!xsGuilds.getMembers().containsKey(target)) {
-                            p.sendMessage(XSUtils.decodeTextFromConfig("guild_kick_null"));
+                            p.sendMessage(XSUtils.decodeTextFromConfig("player_not_in_your_guild"));
                             return false;
                         }
 
@@ -162,6 +163,118 @@ public class commands implements CommandExecutor {
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.KICK_REQUEST+"<SPLIT>"+guild+";"+target);
                         return true;
 
+                    } else if(args[0].equalsIgnoreCase("transfer")) {
+                        String target = args[1];
+
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                        if(!xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                            return false;
+                        }
+
+                        if(target.equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("guild_transfer_self"));
+                            return false;
+                        }
+
+                        if(!xsGuilds.getMembers().containsKey(target)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("player_not_in_your_guild"));
+                            return false;
+                        }
+
+                        p.sendMessage(XSUtils.decodeTextFromConfig("guild_transfer_sender").replace("%player_name%",target));
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.TRANSFER_LEADER_REQUEST+"<SPLIT>"+guild+";"+target);
+                        return true;
+                    } else if(args[0].equalsIgnoreCase("promote")) {
+                        String target = args[1];
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                        if(!xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                            return false;
+                        }
+
+                        if(target.equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("promote_self"));
+                            return false;
+                        }
+
+                        if(!xsGuilds.getMembers().containsKey(target)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("player_not_in_your_guild"));
+                            return false;
+                        }
+
+                        if(xsGuilds.getMembers().get(target).equalsIgnoreCase(XSGUILD_POSITIONS.SUB_LEADER.toString())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("promote_cant"));
+                            return false;
+                        }
+
+                        if(xsGuilds.getSubleader().size() == 4) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("promote_sub_leader_max"));
+                            return false;
+                        }
+
+                        int currentIndexRank = XSGUILD_POSITIONS.valueOf(xsGuilds.getMembers().get(target)).ordinal();
+
+                        String nextRank = String.valueOf(XSGUILD_POSITIONS.values()[currentIndexRank-1]).toLowerCase();
+                        String configRank =  messagesConfig.customConfig.getString("system.ranks."+nextRank);
+                        String rankWithColor = XSUtils.decodeText(configRank);
+
+                        p.sendMessage(XSUtils.decodeTextFromConfig("promote_sender").replace("%player_name%",target).replace("%guild_rank%",rankWithColor));
+
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.PROMOTE_REQUEST+"<SPLIT>"+guild+";"+target+";"+nextRank);
+                        return true;
+                    } else if(args[0].equalsIgnoreCase("demote")) {
+                        String target = args[1];
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                        if(!xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                            return false;
+                        }
+
+                        if(target.equalsIgnoreCase(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("demote_self"));
+                            return false;
+                        }
+
+                        if(!xsGuilds.getMembers().containsKey(target)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("player_not_in_your_guild"));
+                            return false;
+                        }
+
+                        if(xsGuilds.getMembers().get(target).equalsIgnoreCase(XSGUILD_POSITIONS.NEW_MEMBER.toString())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("demote_cant"));
+                            return false;
+                        }
+
+                        int currentIndexRank = XSGUILD_POSITIONS.valueOf(xsGuilds.getMembers().get(target)).ordinal();
+                        String nextRank = String.valueOf(XSGUILD_POSITIONS.values()[currentIndexRank+1]).toLowerCase();
+                        String configRank =  messagesConfig.customConfig.getString("system.ranks."+nextRank);
+                        String rankWithColor = XSUtils.decodeText(configRank);
+
+                        p.sendMessage(XSUtils.decodeTextFromConfig("demote_sender").replace("%player_name%",target).replace("%guild_rank%",rankWithColor));
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEMOTE_REQUEST+"<SPLIT>"+guild+";"+target+";"+nextRank);
+                        return true;
                     }
                 }
             }

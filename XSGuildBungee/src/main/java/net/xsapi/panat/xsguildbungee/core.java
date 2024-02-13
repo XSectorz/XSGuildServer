@@ -48,6 +48,7 @@ public final class core extends Plugin {
 
     @Override
     public void onDisable() {
+        XSHandler.forceSaved();
         XSRedisHandler.destroyThreads();
     }
 }

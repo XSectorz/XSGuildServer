@@ -24,12 +24,12 @@ public class task_save {
                     Connection connection = DriverManager.getConnection(XSDatabaseHandler.getJdbcUrl(),XSDatabaseHandler.getUSER(),XSDatabaseHandler.getPASS());
                     for(Map.Entry<String,XSGuilds> guild : XSGuildsHandler.getGuildList().entrySet()) {
                         XSDatabaseHandler.updateMainGuild(connection,guild.getValue());
-                        core.getPlugin().getLogger().info("Saved : " + guild.getKey());
+                        //core.getPlugin().getLogger().info("Saved : " + guild.getKey());
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                core.getPlugin().getLogger().info("Saved complete!....");
+               // core.getPlugin().getLogger().info("Saved complete!....");
 
             }
         }, 0L, mainConfig.getConfig().getInt("auto-saved"), TimeUnit.SECONDS);

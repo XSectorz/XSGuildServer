@@ -7,6 +7,7 @@ import net.xsapi.panat.xsguildbungee.core;
 import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
 import net.xsapi.panat.xsguildbungee.objects.XSSubGuilds;
 import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
+import net.xsapi.panat.xsguildbungee.utils.XSGUILD_POSITIONS;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -32,10 +33,20 @@ public class XSGuildsHandler {
         return "";
     }
 
+    public static void updateToAllServer(XSGuilds xsGuilds) {
+        Gson gson = new Gson();
+        String guildJson = gson.toJson(xsGuilds);
+        for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+            for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_GUILD+"<SPLIT>"+guildJson);
+            }
+        }
+    }
+
     public static void createTemplateData(int id,String guildRealName,String guildName,String leader) {
         XSGuilds xsGuilds = new XSGuilds(id,guildRealName,guildName,1);
 
-        xsGuilds.getMembers().put(leader,"LEADER");
+        xsGuilds.getMembers().put(leader, XSGUILD_POSITIONS.LEADER.toString());
         xsGuilds.setLeader(leader);
 
         for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
@@ -87,9 +98,9 @@ public class XSGuildsHandler {
 
                     xsGuilds.getMembers().put(name,rank);
                     getPlayers().put(name,guildRealName);
-                    if(rank.equalsIgnoreCase("LEADER")) {
+                    if(rank.equalsIgnoreCase(XSGUILD_POSITIONS.LEADER.toString())) {
                         xsGuilds.setLeader(name);
-                    } else if(rank.equalsIgnoreCase("SUB-LEADER")) {
+                    } else if(rank.equalsIgnoreCase(XSGUILD_POSITIONS.SUB_LEADER.toString())) {
                         xsGuilds.getSubleader().add(name);
                     }
                 }

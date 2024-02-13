@@ -6,6 +6,7 @@ import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
 import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
 import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
+import net.xsapi.panat.xsguildbungee.utils.XSGUILD_POSITIONS;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -159,7 +160,7 @@ public class XSRedisHandler {
 
                                         if(respondType.equalsIgnoreCase("accept")) {
 
-                                            xsGuilds.getMembers().put(player,"MEMBER");
+                                            xsGuilds.getMembers().put(player,XSGUILD_POSITIONS.NEW_MEMBER.toString());
                                             XSGuildsHandler.getPlayers().put(player,guild);
 
                                             Gson gson = new Gson();
@@ -200,13 +201,7 @@ public class XSRedisHandler {
                                 XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                                 xsGuilds.getMembers().remove(player);
 
-                                Gson gson = new Gson();
-                                String guildJson = gson.toJson(xsGuilds);
-                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
-                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_GUILD+"<SPLIT>"+guildJson);
-                                    }
-                                }
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.KICK_REQUEST.toString())) {
                                 String guild = arguments.split(";")[0];
                                 String player = arguments.split(";")[1];
@@ -215,18 +210,67 @@ public class XSRedisHandler {
                                 XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                                 xsGuilds.getMembers().remove(player);
 
-                                Gson gson = new Gson();
-                                String guildJson = gson.toJson(xsGuilds);
-                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
-                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_GUILD+"<SPLIT>"+guildJson);
-                                    }
-                                }
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
 
                                 ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
                                 if(target != null && target.isConnected()) { //respond to target
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
                                             XSDATA_TYPE.KICK_RESPOND+"<SPLIT>"+player);
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.TRANSFER_LEADER_REQUEST.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String player = arguments.split(";")[1];
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                                String leader = xsGuilds.getLeader();
+                                xsGuilds.setLeader(player);
+                                xsGuilds.getMembers().put(player, XSGUILD_POSITIONS.LEADER.toString());
+                                xsGuilds.getMembers().put(leader, XSGUILD_POSITIONS.MEMBER.toString());
+
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+                                if(target != null && target.isConnected()) { //respond to target
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                            XSDATA_TYPE.TRANSFER_LEADER_RESPOND+"<SPLIT>"+player);
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.PROMOTE_REQUEST.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String player = arguments.split(";")[1];
+                                String newRank = arguments.split(";")[2].toUpperCase();
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                if(newRank.equalsIgnoreCase(XSGUILD_POSITIONS.SUB_LEADER.toString())) {
+                                    xsGuilds.getSubleader().add(player);
+                                }
+                                xsGuilds.getMembers().put(player,newRank);
+
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+                                if(target != null && target.isConnected()) { //respond to target
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                            XSDATA_TYPE.PROMOTE_RESPOND+"<SPLIT>"+player+";"+newRank);
+                                }
+
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.DEMOTE_REQUEST.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String player = arguments.split(";")[1];
+                                String newRank = arguments.split(";")[2].toUpperCase();
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                if(newRank.equalsIgnoreCase(XSGUILD_POSITIONS.SUB_LEADER.toString())) {
+                                    xsGuilds.getSubleader().remove(player);
+                                }
+                                xsGuilds.getMembers().put(player,newRank);
+
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+                                if(target != null && target.isConnected()) { //respond to target
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                            XSDATA_TYPE.DEMOTE_RESPOND+"<SPLIT>"+player+";"+newRank);
                                 }
                             }
 
