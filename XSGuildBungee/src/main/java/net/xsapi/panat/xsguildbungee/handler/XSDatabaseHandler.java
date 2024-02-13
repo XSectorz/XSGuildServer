@@ -43,6 +43,7 @@ public class XSDatabaseHandler {
             + "Guild VARCHAR(32), "
             + "GuildName TEXT, "
             + "Players TEXT, "
+            + "Balance DOUBLE, "
             + "GuildLevel INT"
             + ")";
 
@@ -50,6 +51,7 @@ public class XSDatabaseHandler {
             + "id INT PRIMARY KEY AUTO_INCREMENT, "
             + "Reference INT, "
             + "Level INT, "
+            + "Balance DOUBLE, "
             + "Tech TEXT"
             + ")";
 
@@ -115,14 +117,15 @@ public class XSDatabaseHandler {
         }
     }
     private static void createMainGuildServer(Connection connection,String guild,String guildName,String leader) {
-        String insertQuery = "INSERT INTO " + "xsguilds_bungee_main" + " (Guild, GuildName, Players, GuildLevel) "
-                + "VALUES (?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO " + "xsguilds_bungee_main" + " (Guild, GuildName, Players, Balance, GuildLevel) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatementInsert = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatementInsert.setString(1, guild);
             preparedStatementInsert.setString(2, guildName);
             preparedStatementInsert.setString(3, "[LEADER:" + leader + "]");
-            preparedStatementInsert.setInt(4, 1);
+            preparedStatementInsert.setDouble(4, 0);
+            preparedStatementInsert.setInt(5, 1);
             preparedStatementInsert.executeUpdate();
 
             XSGuildsHandler.getPlayers().put(leader,guild); //guild = guild real name
@@ -142,13 +145,14 @@ public class XSDatabaseHandler {
         }
     }
     private static void createSubGuildServer(Connection connection,String subGroup,int ref) {
-        String insertQuery = "INSERT INTO " + ("xsguilds_bungee_"+subGroup) + " (Reference, Level, Tech) "
-                + "VALUES (?, ?, ?)";
+        String insertQuery = "INSERT INTO " + ("xsguilds_bungee_"+subGroup) + " (Reference, Level, Balance, Tech) "
+                + "VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatementInsert = connection.prepareStatement(insertQuery)) {
             preparedStatementInsert.setInt(1, ref);
             preparedStatementInsert.setInt(2, 1);
-            preparedStatementInsert.setString(3, "");
+            preparedStatementInsert.setDouble(3, 0);
+            preparedStatementInsert.setString(4, "");
             preparedStatementInsert.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -156,7 +160,7 @@ public class XSDatabaseHandler {
     }
 
     public static void updateMainGuild(Connection connection,XSGuilds xsGuilds) {
-        String updateQuery ="UPDATE xsguilds_bungee_main" + " SET Players = ?, GuildLevel = ? WHERE id = ?";
+        String updateQuery ="UPDATE xsguilds_bungee_main" + " SET Players = ?, Balance = ?, GuildLevel = ? WHERE id = ?";
 
         ArrayList<String> members = new ArrayList<>();
 
@@ -166,26 +170,30 @@ public class XSDatabaseHandler {
 
         try (PreparedStatement preparedStatementInsert = connection.prepareStatement(updateQuery)) {
             preparedStatementInsert.setString(1, members.toString());
-            preparedStatementInsert.setInt(2, xsGuilds.getGuildLevel());
-            preparedStatementInsert.setInt(3, xsGuilds.getGuildID());
+            preparedStatementInsert.setDouble(2, xsGuilds.getBalance());
+            preparedStatementInsert.setInt(3, xsGuilds.getGuildLevel());
+            preparedStatementInsert.setInt(4, xsGuilds.getGuildID());
             preparedStatementInsert.executeUpdate();
+
+            core.getPlugin().getLogger().info("Balance " + xsGuilds.getBalance());
 
             for (String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                 XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(servers);
-                updateSubGuild(connection,servers,xsSubGuilds.getLevel(),xsSubGuilds.getTech(),xsGuilds.getGuildID());
+                updateSubGuild(connection,servers,xsSubGuilds.getLevel(), xsSubGuilds.getBalance(), xsSubGuilds.getTech(),xsGuilds.getGuildID());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private static void updateSubGuild(Connection connection,String subGroup,int level,String tech,int ref) {
-        String updateQuery = "UPDATE " + ("xsguilds_bungee_"+subGroup) + " SET Level = ?, Tech = ? WHERE Reference = ?";
+    private static void updateSubGuild(Connection connection,String subGroup,int level,double balance,String tech,int ref) {
+        String updateQuery = "UPDATE " + ("xsguilds_bungee_"+subGroup) + " SET Level = ?, Balance = ?, Tech = ? WHERE Reference = ?";
 
         try (PreparedStatement preparedStatementInsert = connection.prepareStatement(updateQuery)) {
             preparedStatementInsert.setInt(1, level);
-            preparedStatementInsert.setString(2, tech);
-            preparedStatementInsert.setInt(3, ref);
+            preparedStatementInsert.setDouble(2, balance);
+            preparedStatementInsert.setString(3, tech);
+            preparedStatementInsert.setInt(4, ref);
             preparedStatementInsert.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -5,6 +5,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
 import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
+import net.xsapi.panat.xsguildbungee.objects.XSSubGuilds;
 import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
 import net.xsapi.panat.xsguildbungee.utils.XSGUILD_POSITIONS;
 import redis.clients.jedis.Jedis;
@@ -271,6 +272,50 @@ public class XSRedisHandler {
                                 if(target != null && target.isConnected()) { //respond to target
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
                                             XSDATA_TYPE.DEMOTE_RESPOND+"<SPLIT>"+player+";"+newRank);
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.DEPOSIT_COINS.toString())) {
+                                String server = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+                                double amount = Double.parseDouble(arguments.split(";")[2]);
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
+                                xsSubGuilds.setBalance(xsSubGuilds.getBalance()+amount);
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.DEPOSIT_POINTS.toString())) {
+                                String guild = arguments.split(";")[0];
+                                double amount = Double.parseDouble(arguments.split(";")[1]);
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                xsGuilds.setBalance(xsGuilds.getBalance()+amount);
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_POINTS.toString())) {
+                                String guild = arguments.split(";")[0];
+                                double amount = Double.parseDouble(arguments.split(";")[1]);
+                                String player = arguments.split(";")[2];
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+
+                                if(target != null && target.isConnected()) { //respond to target
+                                    XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                    xsGuilds.setBalance(xsGuilds.getBalance()-amount);
+                                    XSGuildsHandler.updateToAllServer(xsGuilds);
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                            XSDATA_TYPE.WITHDRAW_POINTS_RESPOND+"<SPLIT>"+player+";"+amount);
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_POINTS.toString())) {
+                                String server = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+                                double amount = Double.parseDouble(arguments.split(";")[2]);
+                                String player = arguments.split(";")[3];
+                                ProxiedPlayer target = core.getPlugin().getProxy().getPlayer(player);
+
+                                if(target != null && target.isConnected()) { //respond to target
+                                    XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                    XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
+                                    xsSubGuilds.setBalance(xsSubGuilds.getBalance()-amount);
+
+                                    XSGuildsHandler.updateToAllServer(xsGuilds);
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
+                                            XSDATA_TYPE.WITHDRAW_COINS_RESPOND+"<SPLIT>"+player+";"+amount);
                                 }
                             }
 

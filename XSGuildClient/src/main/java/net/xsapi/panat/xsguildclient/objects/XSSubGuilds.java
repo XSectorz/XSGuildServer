@@ -6,10 +6,29 @@ public class XSSubGuilds {
     public String tech;
     public String subServer;
 
+    public double balance;
+    public double maxBalance;
+
     public XSSubGuilds(String tech,int level,String subServer) {
         this.tech = tech;
         this.level = level;
         this.subServer = subServer;
+    }
+
+    public double getMaxBalance() {
+        return maxBalance;
+    }
+
+    public void setMaxBalance(double maxBalance) {
+        this.maxBalance = maxBalance;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     public void setTech(String tech) {

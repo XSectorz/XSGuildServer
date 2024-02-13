@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -229,6 +230,30 @@ public class XSRedisHandler {
                                     String nextRank = messagesConfig.customConfig.getString("system.ranks."+rank.toLowerCase());
                                     String rankWithColor = XSUtils.decodeText(nextRank);
                                     target.sendMessage(XSUtils.decodeTextFromConfig("demote_target").replace("%guild_rank%",rankWithColor));
+                                } catch (Exception ignored) {
+
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_POINTS_RESPOND.toString())) {
+                                String player = arguments.split(";")[0];
+                                double amount = Double.parseDouble(arguments.split(";")[1]);
+                                DecimalFormat df = new DecimalFormat("#.##");
+                                try {
+                                    Player target = Bukkit.getPlayer(player);
+                                    assert target != null;
+                                    XSHandler.getSCPoint().give(target.getUniqueId(), (int) amount);
+                                    target.sendMessage(XSUtils.decodeTextFromConfig("withdraw_points").replace("%amount%",df.format(amount)));
+                                } catch (Exception ignored) {
+
+                                }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_POINTS_RESPOND.toString())) {
+                                String player = arguments.split(";")[0];
+                                double amount = Double.parseDouble(arguments.split(";")[1]);
+                                DecimalFormat df = new DecimalFormat("#.##");
+                                try {
+                                    Player target = Bukkit.getPlayer(player);
+                                    assert target != null;
+                                    XSHandler.getEconomy().depositPlayer(target, amount);
+                                    target.sendMessage(XSUtils.decodeTextFromConfig("withdraw_coins").replace("%amount%",df.format(amount)));
                                 } catch (Exception ignored) {
 
                                 }

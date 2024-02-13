@@ -1,5 +1,6 @@
 package net.xsapi.panat.xsguildclient.handler;
 
+import net.milkbowl.vault.economy.Economy;
 import net.xsapi.panat.xsguildclient.commands.commandsLoader;
 import net.xsapi.panat.xsguildclient.config.configLoader;
 import net.xsapi.panat.xsguildclient.config.mainConfig;
@@ -8,14 +9,20 @@ import net.xsapi.panat.xsguildclient.listener.joinEvent;
 import net.xsapi.panat.xsguildclient.listener.leaveEvent;
 import net.xsapi.panat.xsguildclient.placeholder.XSPlaceholders;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
+import org.black_ixx.playerpoints.PlayerPoints;
+import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 
 public class XSHandler {
 
     private static String subChannel = "xsguilds:channel";
     private static String servername = "";
+
+    private static Economy econ = null;
+    private static PlayerPointsAPI ppAPI = null;
 
     private static XSPlaceholders xsPlaceholders;
     public static String getSubChannel() {
@@ -63,6 +70,54 @@ public class XSHandler {
 
     public static void loadGuildData() {
         XSRedisHandler.sendRedisMessage(getSubChannel()+"_bungeecord", XSDATA_TYPE.REQ_GUILD+"<SPLIT>" + getServername());
+    }
+
+    private static boolean setupEconomy() {
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+
+        RegisteredServiceProvider<Economy> rsp = core.getPlugin().getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return true;
+    }
+
+    private static boolean setupSCCoin() {
+        if (Bukkit.getPluginManager().getPlugin("PlayerPoints") != null) {
+            ppAPI = PlayerPoints.getInstance().getAPI();
+        }
+        if (ppAPI != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Economy getEconomy() {
+        return econ;
+    }
+    public static PlayerPointsAPI getSCPoint() {
+        return ppAPI;
+    }
+
+    public static void APILoader() {
+        if (!setupEconomy()) {
+            Bukkit.getConsoleSender().sendMessage("§x§f§f§5§8§5§8[XSGuilds-Client] Disabled due to no Vault dependency found!");
+            Bukkit.getPluginManager().disablePlugin(core.getPlugin());
+            return;
+        } else {
+            Bukkit.getConsoleSender().sendMessage("§x§f§f§c§e§2§2[XSGuilds-Client] Vault: §x§5§d§f§f§6§3Hook");
+        }
+
+        if(!setupSCCoin()) {
+            Bukkit.getConsoleSender().sendMessage("§x§f§f§c§e§2§2[XSGuilds-Client] PlayerPoint: §x§f§f§5§8§5§8Not Hook");
+        } else {
+            Bukkit.getConsoleSender().sendMessage("§x§f§f§c§e§2§2[XSGuilds-Client] PlayerPoint: §x§5§d§f§f§6§3Hook");
+        }
+
     }
 
 

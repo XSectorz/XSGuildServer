@@ -17,7 +17,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class commands implements CommandExecutor {
     @Override
@@ -78,6 +81,53 @@ public class commands implements CommandExecutor {
                         p.sendMessage(XSUtils.decodeTextFromConfig("guild_leave"));
                         XSGuildsHandler.getPlayers().remove(p.getName());
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.LEAVE_GUILD +"<SPLIT>" + p.getName() + ";" + guild);
+                    } else if(args[0].equalsIgnoreCase("balance")) {
+
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                        String patterns = "%guild_balance_[a-zA-Z0-9_]+%";
+                        String patternsMax = "%guild_balance_max_[a-zA-Z0-9_]+%";
+                        Pattern pattern = Pattern.compile(patterns);
+                        Pattern patternMax = Pattern.compile(patternsMax);
+                        DecimalFormat df = new DecimalFormat("#.##");
+
+                        for(String text : messagesConfig.customConfig.getStringList("system.balance_check")) {
+                            Matcher m = pattern.matcher(text);
+                            Matcher mMax = patternMax.matcher(text);
+                            if(m.find()) {
+
+                                String subServer = m.group().replace("guild_balance_","").replace("%","");
+                                double bal;
+
+                                if(subServer.equalsIgnoreCase("main")) {
+                                    bal = xsGuilds.getBalance();
+                                } else {
+                                    bal = xsGuilds.getSubGuilds().get(subServer).getBalance();
+                                }
+
+                                text = text.replace("%guild_balance_"+subServer+"%",df.format(bal));
+                            }
+                            if(mMax.find()) {
+                                String subServer = mMax.group().replace("guild_balance_max_","").replace("%","");
+                                double maxBal;
+
+                                if(subServer.equalsIgnoreCase("main")) {
+                                    maxBal = xsGuilds.getMaxBalance();
+                                } else {
+                                    maxBal = xsGuilds.getSubGuilds().get(subServer).getMaxBalance();
+                                }
+                                text = text.replace("%guild_balance_max_"+subServer+"%",df.format(maxBal));
+                            }
+                            text = text.replace("%guild_name%",guild);
+                            text = XSUtils.decodeText(text);
+                            p.sendMessage(text);
+                        }
+
                     }
                 } else if(args.length == 2) {
                     if(args[0].equalsIgnoreCase("create")) {
@@ -275,6 +325,125 @@ public class commands implements CommandExecutor {
                         p.sendMessage(XSUtils.decodeTextFromConfig("demote_sender").replace("%player_name%",target).replace("%guild_rank%",rankWithColor));
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEMOTE_REQUEST+"<SPLIT>"+guild+";"+target+";"+nextRank);
                         return true;
+                    }
+                } else if(args.length == 3) { //xsguilds deposit <points/coins> <amount>
+                     if(args[0].equalsIgnoreCase("deposit")) {
+                         String type = args[1];
+
+                         if(type.equalsIgnoreCase("points") || type.equalsIgnoreCase("coins")) {
+                             if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                                 return false;
+                             }
+
+                             double amount;
+
+                             try {
+                                 amount = Double.parseDouble(args[2]);
+                             } catch (NumberFormatException nf) {
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("not_a_number"));
+                                 return false;
+                             }
+
+                             if(amount <= 0) {
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("more_than_zero"));
+                                 return false;
+                             }
+                             double balance;
+                             String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                             XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                             if(type.equalsIgnoreCase("points")) {
+                                 balance = (double) XSHandler.getSCPoint().look(p.getUniqueId());
+                                 if(balance < amount) {
+                                     p.sendMessage(XSUtils.decodeTextFromConfig("points_balance_cant_afford"));
+                                     return false;
+                                 }
+
+                                 if(amount+xsGuilds.getBalance() > xsGuilds.getMaxBalance()) {
+                                     p.sendMessage(XSUtils.decodeTextFromConfig("deposit_out_of_capacity"));
+                                     return false;
+                                 }
+
+                                 XSHandler.getSCPoint().take(p.getUniqueId(),(int) amount);
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("deposit_points").replace("%amount%",String.valueOf(amount)));
+                                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEPOSIT_POINTS+"<SPLIT>"+guild+";"+amount);
+                             } else {
+                                 balance = XSHandler.getEconomy().getBalance(p);
+                                 if(balance < amount) {
+                                     p.sendMessage(XSUtils.decodeTextFromConfig("coins_balance_cant_afford"));
+                                     return false;
+                                 }
+                                 String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
+
+                                 if(amount+xsGuilds.getSubGuilds().get(server).getBalance() > xsGuilds.getSubGuilds().get(server).getMaxBalance()) {
+                                     p.sendMessage(XSUtils.decodeTextFromConfig("deposit_out_of_capacity"));
+                                     return false;
+                                 }
+
+                                 XSHandler.getEconomy().withdrawPlayer(p,amount);
+
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("deposit_coins").replace("%amount%",String.valueOf(amount)));
+                                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEPOSIT_COINS+"<SPLIT>"+server+";"+guild+";"+amount);
+                                 return true;
+                             }
+                             return true;
+
+                         } else {
+                             p.sendMessage(XSUtils.decodeTextFromConfig("format_not_match"));
+                             return false;
+                         }
+
+                    } else if(args[0].equalsIgnoreCase("withdraw")) {
+                         String type = args[1];
+
+                         if(type.equalsIgnoreCase("points") || type.equalsIgnoreCase("coins")) {
+                             if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                                 return false;
+                             }
+
+                             double amount;
+
+                             try {
+                                 amount = Double.parseDouble(args[2]);
+                             } catch (NumberFormatException nf) {
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("not_a_number"));
+                                 return false;
+                             }
+
+                             if(amount <= 0) {
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("more_than_zero"));
+                                 return false;
+                             }
+                             double balance;
+                             String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                             XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                             if(type.equalsIgnoreCase("points")) {
+                                 balance = xsGuilds.getBalance();
+                                 if(balance < amount) {
+                                     p.sendMessage(XSUtils.decodeTextFromConfig("withdraw_cant_afford"));
+                                     return false;
+                                 }
+
+                                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.WITHDRAW_POINTS+"<SPLIT>"+guild+";"+amount+";"+p.getName());
+                             } else {
+                                 String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
+
+                                 balance = xsGuilds.getSubGuilds().get(server).getBalance();
+                                 if(balance < amount) {
+                                     p.sendMessage(XSUtils.decodeTextFromConfig("withdraw_cant_afford"));
+                                     return false;
+                                 }
+
+                                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.WITHDRAW_COINS+"<SPLIT>"+server+";"+guild+";"+amount+";"+p.getName());
+                             }
+                             return true;
+
+                         } else {
+                             p.sendMessage(XSUtils.decodeTextFromConfig("format_not_match"));
+                             return false;
+                         }
                     }
                 }
             }

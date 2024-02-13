@@ -48,9 +48,12 @@ public class XSGuildsHandler {
 
         xsGuilds.getMembers().put(leader, XSGUILD_POSITIONS.LEADER.toString());
         xsGuilds.setLeader(leader);
+        xsGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.main.level_1"));
 
         for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
-            xsGuilds.getSubGuilds().put(servers,loadSubGuild(servers,id));
+            XSSubGuilds xsSubGuilds = loadSubGuild(servers,id);
+            xsSubGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.sub.level_1"));
+            xsGuilds.getSubGuilds().put(servers,xsSubGuilds);
         }
         getGuildList().put(guildRealName,xsGuilds);
     }
@@ -88,6 +91,7 @@ public class XSGuildsHandler {
                 //core.getPlugin().getLogger().info("---------------");
 
                 XSGuilds xsGuilds = new XSGuilds(guildID,guildRealName,guildName,guildLevel);
+                xsGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.main.level_"+guildLevel));
 
                 members = members.replace("[","").replace("]","");
 
@@ -106,7 +110,9 @@ public class XSGuildsHandler {
                 }
 
                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
-                    xsGuilds.getSubGuilds().put(servers,loadSubGuild(servers,guildID));
+                    XSSubGuilds xsSubGuilds =   loadSubGuild(servers,guildID);
+                    xsSubGuilds.setMaxBalance((mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.sub.level_"+guildLevel)));
+                    xsGuilds.getSubGuilds().put(servers,xsSubGuilds);
                 }
                 getGuildList().put(guildRealName,xsGuilds);
                 //core.getPlugin().getLogger().info("---------------------");

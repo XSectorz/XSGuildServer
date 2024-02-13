@@ -20,3 +20,10 @@ guilds-group:
     - lobby/01
   skyblock:
     - skyblock/01
+
+guild_configuration:
+  balance_capacity:
+    main:
+      level_1: 5000
+    sub:
+      level_1: 10000

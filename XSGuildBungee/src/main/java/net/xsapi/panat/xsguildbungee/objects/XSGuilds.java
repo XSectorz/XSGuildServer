@@ -20,11 +20,31 @@ public class XSGuilds {
     public String leader;
     public ArrayList<String> subleader = new ArrayList<>();
 
+    public double balance;
+    public double maxBalance;
+
+
     public XSGuilds(int guildID,String guildRealName,String guildName,int guildLevel) {
         this.guildID = guildID;
         this.guildName = guildName;
         this.guildLevel = guildLevel;
         this.guildRealName = guildRealName;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public double getMaxBalance() {
+        return maxBalance;
+    }
+
+    public void setMaxBalance(double maxBalance) {
+        this.maxBalance = maxBalance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     public HashMap<String, Long> getPendingInvite() {
