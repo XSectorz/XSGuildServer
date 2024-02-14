@@ -19,6 +19,7 @@ import redis.clients.jedis.JedisPubSub;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class XSRedisHandler {
@@ -85,7 +86,11 @@ public class XSRedisHandler {
                                     //XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEBUG+"<SPLIT>Recieved data from " + XSHandler.getServername());
                                     String server = arguments.split(";")[1];
                                     String guild = arguments.split(";")[2];
+                                    String isInGuildChat = arguments.split(";")[3];
                                     Bukkit.broadcastMessage("PLAYER: " + player + " SERVER-> " + server + " GUILD-> " + guild + " TEST");
+                                    if(isInGuildChat.equalsIgnoreCase("YES")) {
+                                        XSHandler.getPlayerInGuildChat().add(player);
+                                    }
                                     XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild);
                                 }
 
@@ -278,6 +283,18 @@ public class XSRedisHandler {
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.REMOVE_GUILD.toString())) {
                                 String guild = arguments.split(";")[0];
                                 XSGuildsHandler.getGuildList().remove(guild);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.GUILD_MESSAGE_RESPOND.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String msg = arguments.split(";")[1];
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                                for(Map.Entry<String,String> member : xsGuilds.getMembers().entrySet()) {
+                                    if(Bukkit.getPlayer(member.getKey()) != null && Bukkit.getPlayer(member.getKey()).isOnline()) {
+                                        Player target = Bukkit.getPlayer(member.getKey());
+                                        target.sendMessage(XSUtils.decodeText(msg));
+                                    }
+                                }
                             }
                         }
                     }

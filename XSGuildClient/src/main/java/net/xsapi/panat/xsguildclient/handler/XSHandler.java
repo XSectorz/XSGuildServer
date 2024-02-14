@@ -5,6 +5,7 @@ import net.xsapi.panat.xsguildclient.commands.commandsLoader;
 import net.xsapi.panat.xsguildclient.config.configLoader;
 import net.xsapi.panat.xsguildclient.config.mainConfig;
 import net.xsapi.panat.xsguildclient.core;
+import net.xsapi.panat.xsguildclient.listener.chatEvent;
 import net.xsapi.panat.xsguildclient.listener.joinEvent;
 import net.xsapi.panat.xsguildclient.listener.leaveEvent;
 import net.xsapi.panat.xsguildclient.placeholder.XSPlaceholders;
@@ -15,16 +16,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.ArrayList;
+
 
 public class XSHandler {
 
     private static String subChannel = "xsguilds:channel";
     private static String servername = "";
-
     private static Economy econ = null;
     private static PlayerPointsAPI ppAPI = null;
 
     private static XSPlaceholders xsPlaceholders;
+
+    private static ArrayList<String> playerInGuildChat = new ArrayList<>();
+
+    public static ArrayList<String> getPlayerInGuildChat() {
+        return playerInGuildChat;
+    }
     public static String getSubChannel() {
         return subChannel;
     }
@@ -32,6 +40,7 @@ public class XSHandler {
     public static String getServername() {
         return servername;
     }
+
 
     private static void subChannel() {
         servername = mainConfig.customConfig.getString("configuration.server");
@@ -41,6 +50,7 @@ public class XSHandler {
     private static void loadEvent() {
         Bukkit.getPluginManager().registerEvents(new joinEvent(),core.getPlugin());
         Bukkit.getPluginManager().registerEvents(new leaveEvent(),core.getPlugin());
+        Bukkit.getPluginManager().registerEvents(new chatEvent(),core.getPlugin());
     }
 
     private static void registerPlaceholder() {

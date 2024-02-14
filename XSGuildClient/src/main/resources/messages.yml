@@ -10,6 +10,7 @@ system:
     gui: "<color:#4A404B>▪ <color:#D1A81D>/xsguild gui <white>เปิดเมนูจัดการกิลด์"
     leave: "<color:#4A404B>▪ <color:#D1A81D>/xsguild leave <white>เพื่อออกจากกิลด์"
     disband: "<color:#4A404B>▪ <color:#D1A81D>/xsguild disband <white>ยุบกิลด์"
+    chat: "<color:#4A404B>▪ <color:#D1A81D>/xsguild chat <white>เปิดโหมดคุยแบบกิลด์"
   create: "%prefix%<white>ทำการสร้างกิลด์ <green>%guild_name% <white>เรียบร้อยแล้ว"
   already_in_guild: "%prefix%<color:#C01631>คุณอยู่ในกิลด์อยู่แล้ว"
   min_name: "%prefix%<color:#C01631>ชื่อกิลด์ของคุณมีความยาวน้อยกว่า <yellow><bold>3</bold><color:#C01631> ตัวอักษร"
@@ -66,6 +67,10 @@ system:
   uninvite_not_found: "%prefix%<color:#C01631>ผู้เล่นดังกล่าวไม่ได้ถูกคุณเชิญชวนตั้งแต่แรก"
   uninvite_success: "%prefix%<white>ยกเลิกการเชิญ <color:#4AD842>%player_name%<white> เรียบร้อยแล้ว"
   uninvite_target: "%prefix%<white>คุณถูกยกเลิกคำเชิญจากกิลด์ <color:#4AD842>%guild_name%<white> เรียบร้อยแล้ว"
+  chat_toggle: "%prefix%<white>คุณทำการปรับโหมดพูดคุยกิลด์เป็น %toggle_type%<reset> เรียบร้อยแล้ว"
+  toggles:
+    status_on: "<color:#4AD842>เปิดใช้งาน"
+    status_off: "<color:#C01631>ปิดใช้งาน"
   balance_check:
     - "<dark_gray>------------------------------------"
     - "<white>รายการบัญชีของกิลด์ <color:#4AD842>%guild_name%"

@@ -56,7 +56,12 @@ public class commands implements CommandExecutor {
                             XSGuildsHandler.getPlayers().remove(p.getName());
                             XSGuildsHandler.getGuildList().remove(guild);
 
-                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DISBAND+"<SPLIT>" + server + ";" + guild);
+                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DISBAND+"<SPLIT>" + server + ";" + guild + ";" + p.getName());
+
+                            if(XSHandler.getPlayerInGuildChat().contains(p.getName())) {
+                                XSHandler.getPlayerInGuildChat().remove(p.getName());
+                            }
+
                             p.sendMessage(XSUtils.decodeTextFromConfig("disband"));
                             return true;
                         } else {
@@ -81,6 +86,9 @@ public class commands implements CommandExecutor {
                         p.sendMessage(XSUtils.decodeTextFromConfig("guild_leave"));
                         XSGuildsHandler.getPlayers().remove(p.getName());
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.LEAVE_GUILD +"<SPLIT>" + p.getName() + ";" + guild);
+                        if(XSHandler.getPlayerInGuildChat().contains(p.getName())) {
+                            XSHandler.getPlayerInGuildChat().remove(p.getName());
+                        }
                     } else if(args[0].equalsIgnoreCase("balance")) {
 
                         if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
@@ -128,6 +136,29 @@ public class commands implements CommandExecutor {
                             p.sendMessage(text);
                         }
 
+                    } else if(args[0].equalsIgnoreCase("chat")) {
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String toggle;
+                        if(!XSHandler.getPlayerInGuildChat().contains(p.getName())) {
+                            toggle = messagesConfig.customConfig.getString("system.toggles.status_on");
+                            XSHandler.getPlayerInGuildChat().add(p.getName());
+                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.GUILD_CHAT_CHANGE_STATE +"<SPLIT>" + p.getName() + ";YES");
+                        } else {
+                            toggle = messagesConfig.customConfig.getString("system.toggles.status_off");
+                            XSHandler.getPlayerInGuildChat().remove(p.getName());
+                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.GUILD_CHAT_CHANGE_STATE +"<SPLIT>" + p.getName() + ";NO");
+                        }
+
+                        String text =  messagesConfig.customConfig.getString("system.chat_toggle").replace("%prefix%",messagesConfig.customConfig.getString("system.prefix"));
+
+                        text = text.replace("%toggle_type%",toggle);
+
+                        p.sendMessage(XSUtils.decodeText(text));
+                        return true;
                     }
                 } else if(args.length == 2) {
                     if(args[0].equalsIgnoreCase("create")) {

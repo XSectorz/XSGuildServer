@@ -8,18 +8,23 @@ import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class XSHandler {
 
     private static String subChannel = "xsguilds:channel";
+    private static ArrayList<String> playerInGuildChat = new ArrayList<>();
 
     public static String getSubChannel() {
         return subChannel;
     }
 
 
+    public static ArrayList<String> getPlayerInGuildChat() {
+        return playerInGuildChat;
+    }
     public static void loadEvent() {
         core.getPlugin().getProxy().getPluginManager().registerListener(core.getPlugin(),new playerSwitch());
     }
