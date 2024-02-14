@@ -6,11 +6,13 @@ import net.xsapi.panat.xsguildclient.handler.XSGuildsHandler;
 import net.xsapi.panat.xsguildclient.handler.XSHandler;
 import net.xsapi.panat.xsguildclient.handler.XSRedisHandler;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
+import net.xsapi.panat.xsguildclient.objects.XSSubGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import net.xsapi.panat.xsguildclient.utils.XSGUILD_POSITIONS;
 import net.xsapi.panat.xsguildclient.utils.XSUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -159,6 +162,13 @@ public class commands implements CommandExecutor {
 
                         p.sendMessage(XSUtils.decodeText(text));
                         return true;
+                    } else if(args[0].equalsIgnoreCase("home")) {
+                        //Home format [HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+                        XSHandler.sendPlayerToServer(p,"lobby2");
                     }
                 } else if(args.length == 2) {
                     if(args[0].equalsIgnoreCase("create")) {
@@ -186,6 +196,108 @@ public class commands implements CommandExecutor {
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.CREATE +"<SPLIT>" + p.getName() + ";" + ChatColor.stripColor(name) + ";" + nameWithColor);
                         p.sendMessage(XSUtils.decodeTextFromConfig("create").replace("%guild_name%",nameWithColor));
                         return true;
+                    } else if(args[0].equalsIgnoreCase("sethome")) {
+                        String homeName = args[1];
+
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                        if(!(xsGuilds.getLeader().equalsIgnoreCase(p.getName()) || xsGuilds.getSubleader().contains(p.getName()))) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                            return false;
+                        }
+
+                        String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
+                        XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
+
+                        if(xsSubGuilds.getHomeList().size() >= xsSubGuilds.getMaxHome()) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("sethome_max"));
+                            return false;
+                        }
+
+                        if(xsSubGuilds.getHomeList().containsKey(homeName)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("sethome_already_have"));
+                            return false;
+                        }
+                        p.sendMessage(XSUtils.decodeTextFromConfig("sethome_success").replace("%home_name%",homeName));
+                       // [HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
+
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.SETHOME+"<SPLIT>"+guild+";"+server+";"+homeName+";"+
+                                XSHandler.getServername()+";"+p.getWorld().getName()+";"+p.getLocation().getX()+";"+p.getLocation().getY()+";"+p.getLocation().getZ()+";"+
+                                p.getLocation().getYaw()+";"+p.getLocation().getPitch());
+                        return true;
+
+                    } else if(args[0].equalsIgnoreCase("home")) {
+                        String homeName = args[1];
+
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                        String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
+                        String currentServer = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[2];
+                        XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
+
+                        if(!xsSubGuilds.getHomeList().containsKey(homeName)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("home_not_found"));
+                            return false;
+                        }
+                        //[HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
+                        String homeData = xsSubGuilds.getHomeList().get(homeName);
+                        String serverLoc = homeData.split(":")[1];
+
+                        if(serverLoc.equalsIgnoreCase(currentServer)) {
+                            String homeN = homeData.split(":")[0];
+                            String world = homeData.split(":")[2];
+                            double locX = Double.parseDouble(homeData.split(":")[3]);
+                            double locY = Double.parseDouble(homeData.split(":")[4]);
+                            double locZ = Double.parseDouble(homeData.split(":")[5]);
+                            float yaw = Float.parseFloat(homeData.split(":")[6]);
+                            float pitch = Float.parseFloat(homeData.split(":")[7]);
+
+                            Location loc = new Location(Bukkit.getWorld(world), locX, locY, locZ, yaw, pitch);
+                            p.teleport(loc);
+                            p.sendMessage(XSUtils.decodeTextFromConfig("home_success").replace("%home_name%",homeN));
+                            return false;
+                        } else {
+                            String homeN = homeData.split(":")[0];
+                            XSHandler.sendPlayerToServer(p,homeData.split(":")[1]);
+                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+guild+";"+serverLoc+";"+homeN+";"+p.getName());
+                        }
+
+                    } else if(args[0].equalsIgnoreCase("delhome")) {
+                        String homeName = args[1];
+
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                        String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
+                        XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
+
+                        if(!(xsGuilds.getLeader().equalsIgnoreCase(p.getName()) || xsGuilds.getSubleader().contains(p.getName()))) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                            return false;
+                        }
+
+                        if(!xsSubGuilds.getHomeList().containsKey(homeName)) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("home_not_found"));
+                            return false;
+                        }
+
+                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DELHOME+"<SPLIT>"+server+";"+guild+";"+homeName);
+                        p.sendMessage(XSUtils.decodeTextFromConfig("delhome_success").replace("%home_name%",homeName));
+                        return false;
                     } else if(args[0].equalsIgnoreCase("invite")) {
                         String playerName = args[1];
 

@@ -52,6 +52,7 @@ public class XSDatabaseHandler {
             + "Reference INT, "
             + "Level INT, "
             + "Balance DOUBLE, "
+            + "Home TEXT, "
             + "Tech TEXT"
             + ")";
 
@@ -145,14 +146,15 @@ public class XSDatabaseHandler {
         }
     }
     private static void createSubGuildServer(Connection connection,String subGroup,int ref) {
-        String insertQuery = "INSERT INTO " + ("xsguilds_bungee_"+subGroup) + " (Reference, Level, Balance, Tech) "
-                + "VALUES (?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO " + ("xsguilds_bungee_"+subGroup) + " (Reference, Level, Balance, Home, Tech) "
+                + "VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatementInsert = connection.prepareStatement(insertQuery)) {
             preparedStatementInsert.setInt(1, ref);
             preparedStatementInsert.setInt(2, 1);
             preparedStatementInsert.setDouble(3, 0);
             preparedStatementInsert.setString(4, "");
+            preparedStatementInsert.setString(5, "");
             preparedStatementInsert.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -179,21 +181,30 @@ public class XSDatabaseHandler {
 
             for (String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                 XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(servers);
-                updateSubGuild(connection,servers,xsSubGuilds.getLevel(), xsSubGuilds.getBalance(), xsSubGuilds.getTech(),xsGuilds.getGuildID());
+
+                //Home format [HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
+                ArrayList<String> homes = new ArrayList<>();
+                for(Map.Entry<String,String> home : xsSubGuilds.getHomeList().entrySet()) {
+                    String homeData = home.getValue();
+                    homes.add(homeData);
+                }
+
+                updateSubGuild(connection,servers,xsSubGuilds.getLevel(), xsSubGuilds.getBalance(), xsSubGuilds.getTech(),homes.toString(),xsGuilds.getGuildID());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private static void updateSubGuild(Connection connection,String subGroup,int level,double balance,String tech,int ref) {
-        String updateQuery = "UPDATE " + ("xsguilds_bungee_"+subGroup) + " SET Level = ?, Balance = ?, Tech = ? WHERE Reference = ?";
+    private static void updateSubGuild(Connection connection,String subGroup,int level,double balance,String tech,String home,int ref) {
+        String updateQuery = "UPDATE " + ("xsguilds_bungee_"+subGroup) + " SET Level = ?, Balance = ?, Home = ?, Tech = ? WHERE Reference = ?";
 
         try (PreparedStatement preparedStatementInsert = connection.prepareStatement(updateQuery)) {
             preparedStatementInsert.setInt(1, level);
             preparedStatementInsert.setDouble(2, balance);
-            preparedStatementInsert.setString(3, tech);
-            preparedStatementInsert.setInt(4, ref);
+            preparedStatementInsert.setString(3, home);
+            preparedStatementInsert.setString(4, tech);
+            preparedStatementInsert.setInt(5, ref);
             preparedStatementInsert.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

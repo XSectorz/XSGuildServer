@@ -1,5 +1,7 @@
 package net.xsapi.panat.xsguildclient.objects;
 
+import java.util.HashMap;
+
 public class XSSubGuilds {
 
     public int level;
@@ -9,10 +11,25 @@ public class XSSubGuilds {
     public double balance;
     public double maxBalance;
 
+    public int maxHome;
+    public HashMap<String,String> homeList = new HashMap<>();
+
     public XSSubGuilds(String tech,int level,String subServer) {
         this.tech = tech;
         this.level = level;
         this.subServer = subServer;
+    }
+
+    public int getMaxHome() {
+        return maxHome;
+    }
+
+    public void setMaxHome(int maxHome) {
+        this.maxHome = maxHome;
+    }
+
+    public HashMap<String, String> getHomeList() {
+        return homeList;
     }
 
     public double getMaxBalance() {

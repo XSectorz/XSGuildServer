@@ -27,3 +27,6 @@ guild_configuration:
       level_1: 5000
     sub:
       level_1: 10000
+  home:
+    sub:
+      level_1: 1

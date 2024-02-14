@@ -26,7 +26,7 @@ public final class core extends JavaPlugin {
         XSHandler.initSystem();
         XSHandler.loadOnlinePlayerData();
         XSHandler.APILoader();
-
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     @Override

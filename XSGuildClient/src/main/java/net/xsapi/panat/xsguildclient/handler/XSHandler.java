@@ -16,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.ArrayList;
 
 
@@ -51,6 +53,21 @@ public class XSHandler {
         Bukkit.getPluginManager().registerEvents(new joinEvent(),core.getPlugin());
         Bukkit.getPluginManager().registerEvents(new leaveEvent(),core.getPlugin());
         Bukkit.getPluginManager().registerEvents(new chatEvent(),core.getPlugin());
+    }
+
+    public static void sendPlayerToServer(Player player, String server) {
+        try {
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(b);
+            out.writeUTF("Connect");
+            out.writeUTF(server);
+            player.sendPluginMessage(core.getPlugin(), "BungeeCord", b.toByteArray());
+            b.close();
+            out.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void registerPlaceholder() {

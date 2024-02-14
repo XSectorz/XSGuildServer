@@ -102,7 +102,7 @@ public class XSRedisHandler {
                                                 inGuildChat = "YES";
                                             }
 
-                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.LOAD_DATA+"<SPLIT>" + player + ";" + servers + ";" + guild+";"+inGuildChat);
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.LOAD_DATA+"<SPLIT>" + player + ";" + servers + ";" + guild+";"+inGuildChat+";"+server);
                                         }
                                         break;
                                     }
@@ -373,6 +373,41 @@ public class XSRedisHandler {
                                 } else {
                                     XSHandler.getPlayerInGuildChat().remove(player);
                                 }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.SETHOME.toString())) {
+                                //[HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
+                                String guild = arguments.split(";")[0];
+                                String serverGuild = arguments.split(";")[1];
+                                String homeName = arguments.split(";")[2];
+                                String serverLocation = arguments.split(";")[3];
+                                String world = arguments.split(";")[4];
+                                String locX = arguments.split(";")[5];
+                                String locY = arguments.split(";")[6];
+                                String locZ = arguments.split(";")[7];
+                                String yaw = arguments.split(";")[8];
+                                String pitch = arguments.split(";")[9];
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(serverGuild);
+
+                                String homeData = homeName+":"+serverLocation+":"+world+":"+locX+":"+locY+":"+locZ+":"+yaw+":"+pitch;
+                                xsSubGuilds.getHomeList().put(homeName,homeData);
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.DELHOME.toString())) {
+                                String serverGuild = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+                                String homeName = arguments.split(";")[2];
+
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(serverGuild);
+                                xsSubGuilds.getHomeList().remove(homeName);
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.TELEPORT_TO_HOME.toString())) {
+                                String server = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+                                String serverLoc = arguments.split(";")[2];
+                                String homeN = arguments.split(";")[3];
+                                String player = arguments.split(";")[4];
+                                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+serverLoc,XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+guild+";"+homeN+";"+player);
                             }
 
                         }

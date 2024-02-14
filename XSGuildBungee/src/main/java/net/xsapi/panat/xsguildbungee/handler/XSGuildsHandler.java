@@ -10,6 +10,9 @@ import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
 import net.xsapi.panat.xsguildbungee.utils.XSGUILD_POSITIONS;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class XSGuildsHandler {
@@ -200,13 +203,29 @@ public class XSGuildsHandler {
                 int guildLevel = resultSet.getInt("Level");
                 String guildTech = resultSet.getString("Tech");
                 double guildBalance = resultSet.getDouble("Balance");
+                String guildHome = resultSet.getString("Home");
 
                // core.getPlugin().getLogger().info("SUB GUILD: " + server);
                // core.getPlugin().getLogger().info(guildLevel+"");
                // core.getPlugin().getLogger().info(guildTech);
                // core.getPlugin().getLogger().info("--------------------------");
                 xsSubGuilds = new XSSubGuilds(guildTech,guildLevel,server);
+
+                int maxHome = mainConfig.getConfig().getInt("guild_configuration.home.sub.level_"+guildLevel);
+
+                if(!guildHome.isEmpty() && !guildHome.equalsIgnoreCase("[]")) {
+                    String[] homes = guildHome.substring(1, guildHome.length() - 1).split(",");
+                    //Home format [HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
+                    core.getPlugin().getLogger().info("HOME DATA: " + Arrays.toString(homes));
+                    for(String home : homes) {
+                        String homeName = home.split(":")[0];
+                        xsSubGuilds.getHomeList().put(homeName,home);
+                    }
+                    core.getPlugin().getLogger().info("SERVER: " + server + " HOME: " + homes.length);
+                }
+                xsSubGuilds.setMaxHome(maxHome);
                 xsSubGuilds.setBalance(guildBalance);
+
             }
 
             resultSet.close();

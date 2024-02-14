@@ -8,10 +8,12 @@ import net.xsapi.panat.xsguildclient.config.mainConfig;
 import net.xsapi.panat.xsguildclient.config.messagesConfig;
 import net.xsapi.panat.xsguildclient.core;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
+import net.xsapi.panat.xsguildclient.objects.XSSubGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import net.xsapi.panat.xsguildclient.utils.XSGUILD_POSITIONS;
 import net.xsapi.panat.xsguildclient.utils.XSUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
@@ -87,11 +89,12 @@ public class XSRedisHandler {
                                     String server = arguments.split(";")[1];
                                     String guild = arguments.split(";")[2];
                                     String isInGuildChat = arguments.split(";")[3];
-                                    Bukkit.broadcastMessage("PLAYER: " + player + " SERVER-> " + server + " GUILD-> " + guild + " TEST");
+                                    String currentServer = arguments.split(";")[4];
+                                    Bukkit.broadcastMessage("PLAYER: " + player + " SERVER-> " + server + " GUILD-> " + guild + " CURRENT-> " + currentServer);
                                     if(isInGuildChat.equalsIgnoreCase("YES")) {
                                         XSHandler.getPlayerInGuildChat().add(player);
                                     }
-                                    XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild);
+                                    XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild+"<SPLIT>"+currentServer);
                                 }
 
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.GET_GUILD.toString())) {
@@ -295,6 +298,37 @@ public class XSRedisHandler {
                                         target.sendMessage(XSUtils.decodeText(msg));
                                     }
                                 }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.TELEPORT_TO_HOME.toString())) {
+                                String server = arguments.split(";")[0];
+                                String guild = arguments.split(";")[1];
+                                String homeN = arguments.split(";")[2];
+                                String player = arguments.split(";")[3];
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(core.getPlugin(), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                       if(Bukkit.getPlayer(player) != null && Bukkit.getPlayer(player).isOnline()) {
+                                           Player p = Bukkit.getPlayer(player);
+                                           assert p != null;
+                                           if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                                               p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                                           }
+                                           XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                           XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
+                                           String homeData = xsSubGuilds.getHomeList().get(homeN);
+                                           //[HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH]
+                                           String world = homeData.split(":")[2];
+                                           double locX = Double.parseDouble(homeData.split(":")[3]);
+                                           double locY = Double.parseDouble(homeData.split(":")[4]);
+                                           double locZ = Double.parseDouble(homeData.split(":")[5]);
+                                           float yaw = Float.parseFloat(homeData.split(":")[6]);
+                                           float pitch = Float.parseFloat(homeData.split(":")[7]);
+
+                                           Location loc = new Location(Bukkit.getWorld(world), locX, locY, locZ, yaw, pitch);
+                                           p.teleport(loc);
+                                           p.sendMessage(XSUtils.decodeTextFromConfig("home_success").replace("%home_name%",homeN));
+                                       }
+                                    }
+                                }, 10L);
                             }
                         }
                     }
