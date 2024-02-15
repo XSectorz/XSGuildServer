@@ -1,0 +1,37 @@
+
+configuration:
+  title: "<dark_gray>Main Guild"
+  style:
+    - "x x x x x x x x x"
+    - "@ @ @ @ # @ @ @ @"
+    - "@ @ @ @ @ @ @ @ @"
+    - "@ @ @ @ @ @ @ @ @"
+    - "@ @ @ @ @ @ @ @ @"
+    - "x x x x & x x x x"
+  items:
+    'x':
+      material: DIRT
+      customModelData: 0
+      display: "<reset>"
+      lore: []
+    '@':
+      material: AIR
+      customModelData: 0
+      display: "<reset>"
+      lore: []
+    '#':
+      material: custom_head-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODZjZDhiZDkyMzNkNzNjNzgzMWZmMDA2NWYzZGFhNTgxZDdlMzBlNzgxZmI0YzMwY2ZkZGI2NWVlMGRkMzc2NSJ9fX0=
+      display: "<white>รายละเอียดกิลด์ <color:#4AD842>%guild_name%"
+      lore:
+        - "<reset>"
+        - "<color:#30C718>❙ <white>เลเวลกิลด์ <color:#30C718><bold>%guild_level_main%</bold>"
+        - "<reset>"
+        - "<color:#4A404B>❙ <white>ยอดพ้อยต์กิลด์ <color:#4A404B>%guild_balance_main%<dark_gray>/<color:#4A404B>%guild_balance_max_main% <white>"
+        - "<color:#F29B2A>❙ <white>จำนวนสมาชิก <color:#F29B2A>%guild_members%<dark_gray>/<color:#F29B2A>%guild_max_members% <white>คน"
+        - "<reset>"
+        - "<color:#E0D314>▸ คลิกเพื่อดูรายละเอียดเพิ่มเติม"
+    '&':
+      material: DIRT
+      customModelData: 0
+      display: "<color:#DF143D>ปิดหน้าเมนู"
+      lore: []
