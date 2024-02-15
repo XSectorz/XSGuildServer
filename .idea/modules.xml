@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/XSGuildBungee/XSGuildBungee.iml" filepath="$PROJECT_DIR$/XSGuildBungee/XSGuildBungee.iml" />
+      <module fileurl="file://$PROJECT_DIR$/XSGuildClient/XSGuildClient.iml" filepath="$PROJECT_DIR$/XSGuildClient/XSGuildClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/XSGuildServer.iml" filepath="$PROJECT_DIR$/.idea/XSGuildServer.iml" />
     </modules>
   </component>

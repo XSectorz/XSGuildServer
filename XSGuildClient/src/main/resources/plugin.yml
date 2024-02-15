@@ -1,0 +1,7 @@
+name: XSGuildClient
+version: '${project.version}'
+main: net.xsapi.panat.xsguildclient.core
+api-version: '1.20'
+commands:
+  xsguild:
+    description: main command for guild system

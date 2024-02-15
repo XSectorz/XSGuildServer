@@ -1,0 +1,14 @@
+redis:
+  host: localhost
+  port: 6379
+  password: ''
+
+configuration:
+  server: lobby/01
+  min_length: 3
+  max_length: 8
+  format:
+    nonGuild: "<dark_gray>(<red>ไม่มีกิลด์<dark_gray>)"
+    default: "<dark_gray>(<green><bold>Lv.</bold>%guild_level% <white>%guild_name%<dark_gray>)"
+  guild_messages:
+    default: "<dark_gray>[<color:#DDB819><bold>GUILD</bold><dark_gray>] %guild_position% <green>%player_name% <dark_gray>:<white> %message%"
