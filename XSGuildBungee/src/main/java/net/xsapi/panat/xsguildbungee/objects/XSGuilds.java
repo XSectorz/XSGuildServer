@@ -22,6 +22,7 @@ public class XSGuilds {
 
     public double balance;
     public double maxBalance;
+    public int maxMembers;
 
 
     public XSGuilds(int guildID,String guildRealName,String guildName,int guildLevel) {
@@ -29,6 +30,14 @@ public class XSGuilds {
         this.guildName = guildName;
         this.guildLevel = guildLevel;
         this.guildRealName = guildRealName;
+    }
+
+    public int getMaxMembers() {
+        return maxMembers;
+    }
+
+    public void setMaxMembers(int maxMembers) {
+        this.maxMembers = maxMembers;
     }
 
     public double getBalance() {

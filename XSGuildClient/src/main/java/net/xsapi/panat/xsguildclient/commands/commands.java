@@ -4,12 +4,14 @@ import net.xsapi.panat.xsguildclient.config.mainConfig;
 import net.xsapi.panat.xsguildclient.config.messagesConfig;
 import net.xsapi.panat.xsguildclient.handler.XSGuildsHandler;
 import net.xsapi.panat.xsguildclient.handler.XSHandler;
+import net.xsapi.panat.xsguildclient.handler.XSMenuHandler;
 import net.xsapi.panat.xsguildclient.handler.XSRedisHandler;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.objects.XSSubGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import net.xsapi.panat.xsguildclient.utils.XSGUILD_POSITIONS;
 import net.xsapi.panat.xsguildclient.utils.XSUtils;
+import net.xsapi.panat.xsguildclient.utils.XS_FILE;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -162,13 +164,17 @@ public class commands implements CommandExecutor {
 
                         p.sendMessage(XSUtils.decodeText(text));
                         return true;
-                    } else if(args[0].equalsIgnoreCase("home")) {
+                    } else if(args[0].equalsIgnoreCase("upgrade")) {
                         //Home format [HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
                         if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
                             return false;
                         }
-                        XSHandler.sendPlayerToServer(p,"lobby2");
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                        XSMenuHandler.openMenu(p, XS_FILE.MAIN_MENU,xsGuilds);
+                        return true;
+
                     }
                 } else if(args.length == 2) {
                     if(args[0].equalsIgnoreCase("create")) {

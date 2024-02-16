@@ -107,6 +107,7 @@ public class XSGuildsHandler {
                 XSGuilds xsGuilds = new XSGuilds(guildID,guildRealName,guildName,guildLevel);
                 xsGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.main.level_"+guildLevel));
                 xsGuilds.setBalance(balance);
+                xsGuilds.setMaxMembers(mainConfig.getConfig().getInt("guild_configuration.members.level_"+guildLevel));
 
                 members = members.replace("[","").replace("]","");
 

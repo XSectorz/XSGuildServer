@@ -1,6 +1,7 @@
 package net.xsapi.panat.xsguildclient.config;
 
 import net.xsapi.panat.xsguildclient.core;
+import net.xsapi.panat.xsguildclient.utils.XS_FILE;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -13,43 +14,43 @@ public class menuConfig {
 
     public static HashMap<String,FileConfiguration> customConfig = new HashMap<>();
 
-    public FileConfiguration getConfig(String file) {
-        return customConfig.get(file);
+    public static FileConfiguration getConfig(XS_FILE xsFile) {
+        return customConfig.get(xsFile.toString().toLowerCase());
     }
 
-    public void loadConfigu() {
-        customConfigFile = new File(core.getPlugin().getDataFolder(), "config.yml");
-        if (!customConfigFile.exists()) {
-            customConfigFile.getParentFile().mkdirs();
-            core.getPlugin().saveResource("config.yml", false);
+    public void loadConfigu(String file) {
+        customConfigFile.put(file,new File(core.getPlugin().getDataFolder(), "menu/"+file+".yml"));
+        if (!customConfigFile.get(file).exists()) {
+            customConfigFile.get(file).getParentFile().mkdirs();
+            core.getPlugin().saveResource("menu/"+file+".yml", false);
         }
-        customConfig = (FileConfiguration) new YamlConfiguration();
+        customConfig.put(file, new YamlConfiguration());
         try {
-            customConfig.load(customConfigFile);
+            customConfig.get(file).load(customConfigFile.get(file));
         } catch (IOException | org.bukkit.configuration.InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
 
-    public void save() {
-        customConfigFile = new File(core.getPlugin().getDataFolder(), "config.yml");
+    public void save(String file) {
+        customConfigFile.put(file,new File(core.getPlugin().getDataFolder(), "menu/"+file+".yml"));
         try {
-            customConfig.options().copyDefaults(true);
-            customConfig.save(customConfigFile);
+            customConfig.get(file).options().copyDefaults(true);
+            customConfig.get(file).save(customConfigFile.get(file));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void reload() {
-        customConfigFile = new File(core.getPlugin().getDataFolder(), "config.yml");
-        if(!customConfigFile.exists()) {
-            customConfigFile.getParentFile().mkdirs();
-            core.getPlugin().saveResource("config.yml", false);
+    public static void reload(String file) {
+        customConfigFile.put(file,new File(core.getPlugin().getDataFolder(), "menu/"+file+".yml"));
+        if(!customConfigFile.get(file).exists()) {
+            customConfigFile.get(file).getParentFile().mkdirs();
+            core.getPlugin().saveResource("menu/"+file+".yml", false);
         } else {
-            customConfig = (FileConfiguration) YamlConfiguration.loadConfiguration(customConfigFile);
+            customConfig.put(file, YamlConfiguration.loadConfiguration(customConfigFile.get(file)));
             try {
-                customConfig.save(customConfigFile);
+                customConfig.get(file).save(customConfigFile.get(file));
                 core.getPlugin().reloadConfig();
             } catch (IOException e) {
                 e.printStackTrace();

@@ -2,36 +2,82 @@
 configuration:
   title: "<dark_gray>Main Guild"
   style:
-    - "x x x x x x x x x"
+    - "@ @ @ @ @ @ @ @ @"
     - "@ @ @ @ # @ @ @ @"
     - "@ @ @ @ @ @ @ @ @"
+    - "@ @ SUR @ SKY @ GAMES @ @"
     - "@ @ @ @ @ @ @ @ @"
-    - "@ @ @ @ @ @ @ @ @"
-    - "x x x x & x x x x"
+    - "@ @ @ @ & @ @ @ @"
   items:
-    'x':
-      material: DIRT
-      customModelData: 0
-      display: "<reset>"
-      lore: []
     '@':
-      material: AIR
-      customModelData: 0
-      display: "<reset>"
+      material: PAPER
+      amount: 1
+      customModelData: 10230
+      display: "&f "
       lore: []
     '#':
       material: custom_head-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODZjZDhiZDkyMzNkNzNjNzgzMWZmMDA2NWYzZGFhNTgxZDdlMzBlNzgxZmI0YzMwY2ZkZGI2NWVlMGRkMzc2NSJ9fX0=
+      amount: 1
       display: "<white>รายละเอียดกิลด์ <color:#4AD842>%guild_name%"
       lore:
         - "<reset>"
         - "<color:#30C718>❙ <white>เลเวลกิลด์ <color:#30C718><bold>%guild_level_main%</bold>"
         - "<reset>"
-        - "<color:#4A404B>❙ <white>ยอดพ้อยต์กิลด์ <color:#4A404B>%guild_balance_main%<dark_gray>/<color:#4A404B>%guild_balance_max_main% <white>"
+        - "<color:#30D2EB>❙ <white>ยอดพ้อยต์กิลด์ <color:#30D2EB>%guild_balance_main%<dark_gray>/<color:#30D2EB>%guild_balance_max_main% <white>"
         - "<color:#F29B2A>❙ <white>จำนวนสมาชิก <color:#F29B2A>%guild_members%<dark_gray>/<color:#F29B2A>%guild_max_members% <white>คน"
         - "<reset>"
         - "<color:#E0D314>▸ คลิกเพื่อดูรายละเอียดเพิ่มเติม"
+    'SUR':
+      material: custom_head-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTIzZGFmOGM5NjVlNTAzNGM0YmZjNzlkMmQ2ZWU4MzM5ZjNhMDhhN2U2MmJjNTZiN2FiOGViMmQ3ZDA3MCJ9fX0=
+      amount: 1
+      display: "<dark_gray>--------------------------------"
+      lore:
+        - "<reset>"
+        - "<color:#24CE52>❙ <white>กิลด์เซิฟเวอร์ <color:#24CE52>Survival"
+        - "<color:#30C718>❙ <white>เลเวลกิลด์ <color:#30C718><bold>%guild_level_survival%</bold>"
+        - "<reset>"
+        - "<color:#F3C91F>❙ <white>ยอดเงินกิลด์ <color:#F3C91F>%guild_balance_survival%<dark_gray>/<color:#F3C91F>%guild_balance_max_survival% <white>"
+        - "<color:#C0141B>❙ <white>จำนวนบ้านกิลด์ <color:#C0141B>%guild_home_survival%<dark_gray>/<color:#C0141B>%guild_home_max_survival%"
+        - "<color:#30D2EB>❙ <white>เทคนิคแคลน <color:#30D2EB>0%"
+        - "<reset>"
+        - "<dark_gray>--------------------------------"
+        - "<reset>"
+        - "<color:#E0D314>▸ คลิกเพื่อดูรายละเอียดเพิ่มเติม"
+    'SKY':
+      material: custom_head-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWZlMjRjNmY1MmRkYzA4MzU5Zjc5MjMwMWVjYTk2YWVjZjY2OTc5ZGM4OTljNDMyNDJkMjU4N2ViY2I3MGU2In19fQ==
+      amount: 1
+      display: "<dark_gray>--------------------------------"
+      lore:
+        - "<reset>"
+        - "<color:#24CE52>❙ <white>กิลด์เซิฟเวอร์ <color:#24CE52>Skyblock"
+        - "<color:#30C718>❙ <white>เลเวลกิลด์ <color:#30C718><bold>%guild_level_skyblock%</bold>"
+        - "<reset>"
+        - "<color:#F3C91F>❙ <white>ยอดเงินกิลด์ <color:#F3C91F>%guild_balance_skyblock%<dark_gray>/<color:#F3C91F>%guild_balance_max_skyblock% <white>"
+        - "<color:#C0141B>❙ <white>จำนวนบ้านกิลด์ <color:#C0141B>%guild_home_skyblock%<dark_gray>/<color:#C0141B>%guild_home_max_skyblock%"
+        - "<color:#30D2EB>❙ <white>เทคนิคแคลน <color:#30D2EB>0%"
+        - "<reset>"
+        - "<dark_gray>--------------------------------"
+        - "<reset>"
+        - "<color:#E0D314>▸ คลิกเพื่อดูรายละเอียดเพิ่มเติม"
+    'GAMES':
+      material: custom_head-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGUzMzhiYjMyMjg3YWZkNjMyYmM4NzRiMzJmNTNhNTZmNDRiN2FlZTI2Y2QzZDVjNmZkYWQ5OWYzNDBmNDcwIn19fQ==
+      amount: 1
+      display: "<dark_gray>--------------------------------"
+      lore:
+        - "<reset>"
+        - "<color:#24CE52>❙ <white>กิลด์เซิฟเวอร์ <color:#24CE52>Minigames"
+        - "<color:#30C718>❙ <white>เลเวลกิลด์ <color:#30C718><bold>%guild_level_lobby%</bold>"
+        - "<reset>"
+        - "<color:#F3C91F>❙ <white>ยอดเงินกิลด์ <color:#F3C91F>%guild_balance_lobby%<dark_gray>/<color:#F3C91F>%guild_balance_max_lobby% <white>"
+        - "<color:#C0141B>❙ <white>จำนวนบ้านกิลด์ <color:#C0141B>%guild_home_lobby%<dark_gray>/<color:#C0141B>%guild_home_max_lobby%"
+        - "<color:#30D2EB>❙ <white>เทคนิคแคลน <color:#30D2EB>0%"
+        - "<reset>"
+        - "<dark_gray>--------------------------------"
+        - "<reset>"
+        - "<color:#E0D314>▸ คลิกเพื่อดูรายละเอียดเพิ่มเติม"
     '&':
-      material: DIRT
-      customModelData: 0
+      material: PAPER
+      customModelData: 10215
+      amount: 1
       display: "<color:#DF143D>ปิดหน้าเมนู"
       lore: []

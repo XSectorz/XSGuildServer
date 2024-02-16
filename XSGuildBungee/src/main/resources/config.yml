@@ -30,3 +30,5 @@ guild_configuration:
   home:
     sub:
       level_1: 1
+  members:
+    level_1: 10
