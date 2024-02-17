@@ -15,14 +15,21 @@ import java.util.HashMap;
 
 public class XSMenuHandler {
 
+    private static HashMap<Player,HashMap<Integer, String>> actionClicked = new HashMap<>();
+
+    public static HashMap<Player,HashMap<Integer, String>> getActionClicked() {
+        return actionClicked;
+    }
+
     public static void openMenu(Player p, XS_FILE xsFile, XSGuilds xsGuilds) {
 
         int size = 9 * menuConfig.getConfig(xsFile).getStringList("configuration.style").size();
         String title = XSUtils.decodeText(menuConfig.getConfig(xsFile).getString("configuration.title"));
         Inventory inv = Bukkit.createInventory(null, size, title);
 
-
+        String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
         HashMap<String, ItemStack> items = new HashMap<>();
+        getActionClicked().put(p,new HashMap<>());
 
         for(String item : menuConfig.getConfig(xsFile).getConfigurationSection("configuration.items").getKeys(false)) {
             ItemStack it = XSUtils.decodeItemFromConfig(item,xsFile);
@@ -31,13 +38,19 @@ public class XSMenuHandler {
 
         for(int rows = 0 ; rows < menuConfig.getConfig(xsFile).getStringList("configuration.style").size() ; rows++) {
             for(int symbol = 0 ; symbol < menuConfig.getConfig(xsFile).getStringList("configuration.style").get(rows).split(" ").length ; symbol++) {
-                ItemStack item = items.get(menuConfig.getConfig(xsFile).getStringList("configuration.style").get(rows).split(" ")[symbol]);
+                String key = menuConfig.getConfig(xsFile).getStringList("configuration.style").get(rows).split(" ")[symbol];
+                ItemStack item = items.get(key);
+                int slot = symbol+(rows*9);
+
+                if(menuConfig.getConfig(xsFile).get("configuration.items."+key+".action") != null) {
+                    XSMenuHandler.getActionClicked().get(p).put(slot,menuConfig.getConfig(xsFile).getString("configuration.items."+key+".action"));
+                }
 
                 ArrayList<String> lore = new ArrayList<>();
 
                 if(item.hasItemMeta() && item.getItemMeta().hasLore()) {
                     for(String str : item.getItemMeta().getLore()) {
-                        lore.add(XSUtils.decodeStringWithPlaceholder(str,xsGuilds));
+                        lore.add(XSUtils.decodeStringWithPlaceholder(str,xsGuilds,server));
                     }
                     ItemMeta meta = item.getItemMeta();
                     meta.setLore(lore);
@@ -45,11 +58,11 @@ public class XSMenuHandler {
                 }
                 if(item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
                     ItemMeta meta = item.getItemMeta();
-                    meta.setDisplayName(XSUtils.decodeStringWithPlaceholder(item.getItemMeta().getDisplayName(),xsGuilds));
+                    meta.setDisplayName(XSUtils.decodeStringWithPlaceholder(item.getItemMeta().getDisplayName(),xsGuilds,server));
                     item.setItemMeta(meta);
                 }
 
-                inv.setItem(symbol+(rows*9),item);
+                inv.setItem(slot,item);
             }
         }
 

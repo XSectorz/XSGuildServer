@@ -164,8 +164,7 @@ public class commands implements CommandExecutor {
 
                         p.sendMessage(XSUtils.decodeText(text));
                         return true;
-                    } else if(args[0].equalsIgnoreCase("upgrade")) {
-                        //Home format [HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
+                    } else if(args[0].equalsIgnoreCase("menu")) {
                         if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
                             return false;
@@ -174,7 +173,15 @@ public class commands implements CommandExecutor {
                         XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                         XSMenuHandler.openMenu(p, XS_FILE.MAIN_MENU,xsGuilds);
                         return true;
-
+                    } else if(args[0].equalsIgnoreCase("upgrade")) {
+                        if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("no_guild"));
+                            return false;
+                        }
+                        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                        XSMenuHandler.openMenu(p, XS_FILE.UPGRADE_MENU,xsGuilds);
+                        return true;
                     }
                 } else if(args.length == 2) {
                     if(args[0].equalsIgnoreCase("create")) {

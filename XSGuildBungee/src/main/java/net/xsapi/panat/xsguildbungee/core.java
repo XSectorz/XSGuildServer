@@ -34,6 +34,7 @@ public final class core extends Plugin {
         XSDatabaseHandler.createSQLDatabase();
         XSGuildsHandler.loadData();
         XSGuildsHandler.forceLoad();
+        XSHandler.loadUpgrades();
 
         /*getProxy().getScheduler().schedule(plugin, new Runnable() {
             @Override

@@ -1,0 +1,73 @@
+
+configuration:
+  title: "<dark_gray>Upgrade Menu"
+  style:
+    - "@ @ @ @ @ @ @ @ @"
+    - "@ @ # @ ! @ $ @ @"
+    - "@ @ @ @ @ @ @ @ @"
+    - "@ @ @ ACCEPT INFO DENY @ @ @"
+  items:
+    '@':
+      material: PAPER
+      amount: 1
+      customModelData: 10230
+      display: "&f "
+      lore: []
+    '!':
+      material: PAPER
+      amount: 1
+      customModelData: 10211
+      display: "&f "
+      lore: []
+    'ACCEPT':
+      material: PAPER
+      amount: 1
+      customModelData: 10222
+      action: "upgrade:%type%"
+      display: "<color:#0EB635>ยืนยันการอัพเกรด"
+      lore: []
+    'INFO':
+      material: PAPER
+      amount: 1
+      customModelData: 10239
+      display: "<color:#E8AB1C>เงื่อนไขการอัพเกรด"
+      lore:
+        - "<reset>"
+        - "<color:#4A404B>▸ <white>ยอดพ้อยต์กิลด์ <color:#30D2EB>%guild_balance_main%<dark_gray>/<color:#30D2EB>%required_points% <white>"
+        - "<color:#4A404B>▸ <white>ยอดเงินกิลด์ <color:#F3C91F>%guild_balance_(server)%<dark_gray>/<color:#F3C91F>%required_coins% <white>"
+        - "<reset>"
+    'DENY':
+      material: PAPER
+      amount: 1
+      customModelData: 10224
+      action: "close"
+      display: "<color:#D51A27>ยกเลิกการอัพเกรด"
+      lore: []
+    '#':
+      material: custom_head-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODZjZDhiZDkyMzNkNzNjNzgzMWZmMDA2NWYzZGFhNTgxZDdlMzBlNzgxZmI0YzMwY2ZkZGI2NWVlMGRkMzc2NSJ9fX0=
+      amount: 1
+      display: "<dark_gray>(<white>ค่าสถานะกิลด์ปัจจุบัน<dark_gray>)"
+      lore:
+        - "<reset>"
+        - "<color:#30C718>❙ <white>เลเวลกิลด์ <color:#30C718><bold>%guild_level_(server)%</bold>"
+        - "<reset>"
+        - "<color:#F3C91F>❙ <white>ขีดจำกัดยอดเงินกิลด์ <color:#F3C91F>%guild_max_balance_(server)%"
+        - "<color:#F3C91F>❙ <white>จำนวนบ้านสูงสุด <color:#F3C91F>%guild_max_home_(server)%"
+        - "<reset>"
+    '$':
+      material: custom_head-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODZjZDhiZDkyMzNkNzNjNzgzMWZmMDA2NWYzZGFhNTgxZDdlMzBlNzgxZmI0YzMwY2ZkZGI2NWVlMGRkMzc2NSJ9fX0=
+      amount: 1
+      display: "<dark_gray>(<white>ค่าสถานะกิลด์หลังอัพเกรด<dark_gray>)"
+      lore:
+        - "<reset>"
+        - "<color:#30C718>❙ <white>เลเวลกิลด์ <gray><bold>%guild_level_(server)% <white>➟ </bold><color:#30C718><bold>%guild_next_level_(server)%</bold>"
+        - "<reset>"
+        - "<color:#F3C91F>❙ <white>ยอดคลังกิลด์ <gray>%guild_max_balance_(server)% <white>➟ <color:#F3C91F>%guild_max_balance_next_(server)%"
+        - "<color:#F3C91F>❙ <white>จำนวนบ้านสูงสุด <gray>%guild_max_home_(server)% <white>➟ <color:#F3C91F>%guild_max_home_next_(server)%"
+        - "<reset>"
+    '&':
+      material: PAPER
+      customModelData: 10215
+      amount: 1
+      display: "<color:#DF143D>ปิดหน้าเมนู"
+      lore: []

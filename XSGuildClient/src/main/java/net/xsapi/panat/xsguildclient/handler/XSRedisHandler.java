@@ -9,6 +9,7 @@ import net.xsapi.panat.xsguildclient.config.messagesConfig;
 import net.xsapi.panat.xsguildclient.core;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.objects.XSSubGuilds;
+import net.xsapi.panat.xsguildclient.objects.XSUpgrades;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import net.xsapi.panat.xsguildclient.utils.XSGUILD_POSITIONS;
 import net.xsapi.panat.xsguildclient.utils.XSUtils;
@@ -329,6 +330,33 @@ public class XSRedisHandler {
                                        }
                                     }
                                 }, 10L);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.SENT_UPGRADES_INFO.toString())) {
+                                String mainUpgradeJson = arguments.split(";")[0];
+                                String subUpgradeJson = arguments.split(";")[1];
+
+                                Gson gson = new Gson();
+                                HashMap<Integer, XSUpgrades> mainUpgrade = gson.fromJson(mainUpgradeJson, new TypeToken<HashMap<Integer, XSUpgrades>>(){}.getType());
+                                HashMap<Integer, XSUpgrades> subUpgrade = gson.fromJson(subUpgradeJson, new TypeToken<HashMap<Integer, XSUpgrades>>(){}.getType());
+
+                                //Bukkit.broadcastMessage(mainUpgradeJson);
+                                //Bukkit.broadcastMessage(subUpgradeJson);
+
+                                XSHandler.setMainClanUpgrades(mainUpgrade);
+                                XSHandler.setSubClanUpgrades(subUpgrade);
+
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPGRADE_RES.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String lvl = arguments.split(";")[1];
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                                for(Map.Entry<String,String> member : xsGuilds.getMembers().entrySet()) {
+                                    if(Bukkit.getPlayer(member.getKey()) != null && Bukkit.getPlayer(member.getKey()).isOnline()) {
+                                        Player target = Bukkit.getPlayer(member.getKey());
+                                        target.sendMessage(XSUtils.decodeTextFromConfig("upgrade_success").replace("%guild_level%", lvl));
+                                    }
+                                }
+
+
                             }
                         }
                     }

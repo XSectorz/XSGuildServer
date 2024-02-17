@@ -114,6 +114,10 @@ public class XSRedisHandler {
                                 String guildJson = gson.toJson(XSGuildsHandler.getGuildList());
                                 //core.getPlugin().getLogger().info(guildJson);
                                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.GET_GUILD+"<SPLIT>" + guildJson);
+
+                                String mainClanUpgradeJson = gson.toJson(XSHandler.mainClanUpgrades);
+                                String subClanUpgradeJson = gson.toJson(XSHandler.subClanUpgrades);
+                                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server, XSDATA_TYPE.SENT_UPGRADES_INFO+"<SPLIT>"+mainClanUpgradeJson+";"+subClanUpgradeJson);;
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.DISBAND.toString())) {
                                 String guild = arguments.split(";")[1];
                                 String player = arguments.split(";")[2];
@@ -401,13 +405,29 @@ public class XSRedisHandler {
                                 XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(serverGuild);
                                 xsSubGuilds.getHomeList().remove(homeName);
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
-                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.TELEPORT_TO_HOME.toString())) {
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPGRADE_REQ.toString())) {
                                 String server = arguments.split(";")[0];
                                 String guild = arguments.split(";")[1];
-                                String serverLoc = arguments.split(";")[2];
-                                String homeN = arguments.split(";")[3];
-                                String player = arguments.split(";")[4];
-                                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+serverLoc,XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+guild+";"+homeN+";"+player);
+                                String level = arguments.split(";")[2];
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
+
+                                double reqPoints = XSHandler.subClanUpgrades.get(Integer.parseInt(level)).getPricePoints();
+                                double reqCoins = XSHandler.subClanUpgrades.get(Integer.parseInt(level)).getPriceCoins();
+                                xsSubGuilds.setBalance(xsSubGuilds.getBalance()-reqCoins);
+                                xsGuilds.setBalance(xsGuilds.getBalance()-reqPoints);
+
+                                int newLvl = Integer.parseInt(level);
+                                xsSubGuilds.setLevel(newLvl);
+                                xsSubGuilds.setMaxHome(Integer.parseInt(XSHandler.subClanUpgrades.get(newLvl).getNextUpgrades().get("HOME")));
+                                xsSubGuilds.setMaxBalance(Integer.parseInt(XSHandler.subClanUpgrades.get(newLvl).getNextUpgrades().get("BANK_CAPACITY")));
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPGRADE_RES+"<SPLIT>"+guild+";"+newLvl);
+                                    }
+                                }
+                                //XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+,XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+guild+";"+homeN+";"+player);
                             }
 
                         }

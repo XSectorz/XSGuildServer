@@ -25,10 +25,35 @@ guild_configuration:
   balance_capacity:
     main:
       level_1: 5000
+      level_2: 10000
+      level_3: 15000
     sub:
       level_1: 10000
+      level_2: 15000
+      level_3: 20000
   home:
     sub:
       level_1: 1
+      level_2: 1
+      level_3: 2
   members:
-    level_1: 10
+    main:
+      level_1: 10
+      level_2: 15
+      level_3: 20
+
+upgrades_configuration:
+  main:
+    level_2:
+      points: 300
+      coins: 500
+    level_3:
+      points: 400
+      coins: 700
+  sub:
+    level_2:
+      points: 500
+      coins: 300
+    level_3:
+      points: 700
+      coins: 400

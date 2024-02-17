@@ -6,8 +6,10 @@ import net.xsapi.panat.xsguildclient.config.configLoader;
 import net.xsapi.panat.xsguildclient.config.mainConfig;
 import net.xsapi.panat.xsguildclient.core;
 import net.xsapi.panat.xsguildclient.listener.chatEvent;
+import net.xsapi.panat.xsguildclient.listener.inventoryEvent;
 import net.xsapi.panat.xsguildclient.listener.joinEvent;
 import net.xsapi.panat.xsguildclient.listener.leaveEvent;
+import net.xsapi.panat.xsguildclient.objects.XSUpgrades;
 import net.xsapi.panat.xsguildclient.placeholder.XSPlaceholders;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import org.black_ixx.playerpoints.PlayerPoints;
@@ -19,6 +21,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class XSHandler {
@@ -32,6 +35,9 @@ public class XSHandler {
 
     private static ArrayList<String> playerInGuildChat = new ArrayList<>();
 
+    private static HashMap<Integer, XSUpgrades> mainClanUpgrades = new HashMap<>();
+    private static HashMap<Integer, XSUpgrades> subClanUpgrades = new HashMap<>();
+
     public static ArrayList<String> getPlayerInGuildChat() {
         return playerInGuildChat;
     }
@@ -43,6 +49,21 @@ public class XSHandler {
         return servername;
     }
 
+    public static HashMap<Integer, XSUpgrades> getMainClanUpgrades() {
+        return mainClanUpgrades;
+    }
+
+    public static HashMap<Integer, XSUpgrades> getSubClanUpgrades() {
+        return subClanUpgrades;
+    }
+
+    public static void setMainClanUpgrades(HashMap<Integer, XSUpgrades> mainClanUpgrades) {
+        XSHandler.mainClanUpgrades = mainClanUpgrades;
+    }
+
+    public static void setSubClanUpgrades(HashMap<Integer, XSUpgrades> subClanUpgrades) {
+        XSHandler.subClanUpgrades = subClanUpgrades;
+    }
 
     private static void subChannel() {
         servername = mainConfig.customConfig.getString("configuration.server");
@@ -53,6 +74,7 @@ public class XSHandler {
         Bukkit.getPluginManager().registerEvents(new joinEvent(),core.getPlugin());
         Bukkit.getPluginManager().registerEvents(new leaveEvent(),core.getPlugin());
         Bukkit.getPluginManager().registerEvents(new chatEvent(),core.getPlugin());
+        Bukkit.getPluginManager().registerEvents(new inventoryEvent(),core.getPlugin());
     }
 
     public static void sendPlayerToServer(Player player, String server) {

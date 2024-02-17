@@ -77,6 +77,10 @@ system:
   home_not_found: "%prefix%<color:#C01631>ไม่พบบ้านกิลด์ดังกล่าวในระบบ"
   home_success: "%prefix%<white>ทำการวาร์ปไปยังบ้านกิลด์ <color:#4AD842>%home_name% <white>เรียบร้อยแล้ว"
   delhome_success: "%prefix%<white>ทำการลบบ้านกิลด์ <color:#4AD842>%home_name% <white>เรียบร้อยแล้ว"
+  upgrade_success: "%prefix%<white>กิลด์ของคุณได้ทำการอัพเกรดกิลด์เป็นระดับ <color:#4AD842><bold>%guild_level%</bold> <white>เรียบร้อยแล้ว"
+  upgrade_max: "%prefix%<color:#C01631>ไม่สามารถอัพเกรดได้เนื่องจากถึงระดับสูงสุดแล้ว"
+  upgrade_resource_not_match: "%prefix%<color:#C01631>ไม่สามารถอัพเกรดได้เนื่องจากความต้องการไม่ตรงกับเงื่อนไขของระบบ"
+  upgrade_max_placeholder: "<color:#C01631>เลเวลสูงสุดแล้ว"
   toggles:
     status_on: "<color:#4AD842>เปิดใช้งาน"
     status_off: "<color:#C01631>ปิดใช้งาน"

@@ -107,7 +107,7 @@ public class XSGuildsHandler {
                 XSGuilds xsGuilds = new XSGuilds(guildID,guildRealName,guildName,guildLevel);
                 xsGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.main.level_"+guildLevel));
                 xsGuilds.setBalance(balance);
-                xsGuilds.setMaxMembers(mainConfig.getConfig().getInt("guild_configuration.members.level_"+guildLevel));
+                xsGuilds.setMaxMembers(mainConfig.getConfig().getInt("guild_configuration.members.main.level_"+guildLevel));
 
                 members = members.replace("[","").replace("]","");
 
@@ -127,7 +127,7 @@ public class XSGuildsHandler {
 
                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                     XSSubGuilds xsSubGuilds =  loadSubGuild(servers,guildID);
-                    xsSubGuilds.setMaxBalance((mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.sub.level_"+guildLevel)));
+                    xsSubGuilds.setMaxBalance((mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.sub.level_"+xsSubGuilds.getLevel())));
                     xsGuilds.getSubGuilds().put(servers,xsSubGuilds);
                 }
                 getGuildList().put(guildRealName,xsGuilds);
@@ -217,12 +217,12 @@ public class XSGuildsHandler {
                 if(!guildHome.isEmpty() && !guildHome.equalsIgnoreCase("[]")) {
                     String[] homes = guildHome.substring(1, guildHome.length() - 1).split(",");
                     //Home format [HOME_NAME:SERVER:WORLD:LOC_X:LOC_Y:LOC_Z:YAW:PITCH,]
-                    core.getPlugin().getLogger().info("HOME DATA: " + Arrays.toString(homes));
+                    //core.getPlugin().getLogger().info("HOME DATA: " + Arrays.toString(homes));
                     for(String home : homes) {
                         String homeName = home.split(":")[0];
                         xsSubGuilds.getHomeList().put(homeName,home);
                     }
-                    core.getPlugin().getLogger().info("SERVER: " + server + " HOME: " + homes.length);
+                    //core.getPlugin().getLogger().info("SERVER: " + server + " HOME: " + homes.length);
                 }
                 xsSubGuilds.setMaxHome(maxHome);
                 xsSubGuilds.setBalance(guildBalance);
