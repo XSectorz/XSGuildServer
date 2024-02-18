@@ -27,29 +27,33 @@ guild_configuration:
       level_1: 5000
       level_2: 10000
       level_3: 15000
+      level_4: 20000
     sub:
       level_1: 10000
       level_2: 15000
       level_3: 20000
+      level_4: 25000
   home:
     sub:
       level_1: 1
       level_2: 1
       level_3: 2
+      level_4: 2
   members:
     main:
       level_1: 10
       level_2: 15
       level_3: 20
+      level_4: 25
 
 upgrades_configuration:
   main:
     level_2:
-      points: 300
-      coins: 500
+      points: 1000
     level_3:
-      points: 400
-      coins: 700
+      points: 1500
+    level_4:
+      points: 2000
   sub:
     level_2:
       points: 500
@@ -57,3 +61,6 @@ upgrades_configuration:
     level_3:
       points: 700
       coins: 400
+    level_4:
+      points: 1400
+      coins: 800

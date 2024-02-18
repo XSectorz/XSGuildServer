@@ -355,8 +355,16 @@ public class XSRedisHandler {
                                         target.sendMessage(XSUtils.decodeTextFromConfig("upgrade_success").replace("%guild_level%", lvl));
                                     }
                                 }
-
-
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPGRADE_MAIN_RES.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String lvl = arguments.split(";")[1];
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                for(Map.Entry<String,String> member : xsGuilds.getMembers().entrySet()) {
+                                    if(Bukkit.getPlayer(member.getKey()) != null && Bukkit.getPlayer(member.getKey()).isOnline()) {
+                                        Player target = Bukkit.getPlayer(member.getKey());
+                                        target.sendMessage(XSUtils.decodeTextFromConfig("upgrade_main_success").replace("%guild_level%", lvl));
+                                    }
+                                }
                             }
                         }
                     }

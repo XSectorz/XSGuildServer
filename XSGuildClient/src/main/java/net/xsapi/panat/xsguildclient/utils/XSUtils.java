@@ -78,23 +78,54 @@ public class XSUtils {
 
         DecimalFormat df = new DecimalFormat("#.##");
         if(mLevelNext.find()) {
-            String lvl = String.valueOf(xsGuilds.getSubGuilds().get(server).getLevel()+1);
+            String lvl;
+            String serverGroup = mLevelNext.group().replace("guild_next_level_","").replace("%","");
 
-            if(!XSHandler.getSubClanUpgrades().containsKey(xsGuilds.getSubGuilds().get(server).getLevel()+1)) { //reach max level
-                lvl = XSUtils.decodeTextFromConfig("upgrade_max_placeholder");
+            if(serverGroup.equalsIgnoreCase("main")) {
+                if(!XSHandler.getMainClanUpgrades().containsKey(xsGuilds.getGuildLevel()+1)) { //reach max level
+                    lvl = XSUtils.decodeTextFromConfig("upgrade_max_placeholder");
+                } else {
+                    lvl = String.valueOf(xsGuilds.getGuildLevel()+1);
+                }
+                str = str.replace("%guild_next_level_main%",lvl);
+            } else {
+                if(!XSHandler.getSubClanUpgrades().containsKey(xsGuilds.getSubGuilds().get(server).getLevel()+1)) { //reach max level
+                    lvl = XSUtils.decodeTextFromConfig("upgrade_max_placeholder");
+                } else {
+                    lvl = String.valueOf(xsGuilds.getSubGuilds().get(server).getLevel()+1);
+                }
+                str = str.replace("%guild_next_level_(server)%",lvl);
             }
-
-            str = str.replace("%guild_next_level_(server)%",lvl);
+        }
+        if(str.contains("%guild_max_members_next_main%")) {
+            String nextMember;
+            if(!XSHandler.getMainClanUpgrades().containsKey(xsGuilds.getGuildLevel()+1)) { //reach max level
+                nextMember = XSUtils.decodeTextFromConfig("upgrade_max_placeholder");
+            } else {
+                nextMember = XSHandler.getMainClanUpgrades().get(xsGuilds.getGuildLevel()+1).getNextUpgrades().get("MEMBERS");
+            }
+            str = str.replace("%guild_max_members_next_main%",nextMember);
         }
         if(mBalNext.find()) {
             String balNext;
 
-            if(!XSHandler.getSubClanUpgrades().containsKey(xsGuilds.getSubGuilds().get(server).getLevel()+1)) { //reach max level
-                balNext = XSUtils.decodeTextFromConfig("upgrade_max_placeholder");
+            String serverGroup = mBalNext.group().replace("guild_max_balance_next_","").replace("%","");
+
+            if(serverGroup.equalsIgnoreCase("main")) {
+                if(!XSHandler.getMainClanUpgrades().containsKey(xsGuilds.getGuildLevel()+1)) { //reach max level
+                    balNext = XSUtils.decodeTextFromConfig("upgrade_max_placeholder");
+                } else {
+                    balNext = XSHandler.getMainClanUpgrades().get(xsGuilds.getGuildLevel()+1).getNextUpgrades().get("BANK_CAPACITY");
+                }
+                str = str.replace("%guild_max_balance_next_main%",balNext);
             } else {
-                balNext = XSHandler.getSubClanUpgrades().get(xsGuilds.getSubGuilds().get(server).getLevel()+1).getNextUpgrades().get("BANK_CAPACITY");
+                if(!XSHandler.getSubClanUpgrades().containsKey(xsGuilds.getSubGuilds().get(server).getLevel()+1)) { //reach max level
+                    balNext = XSUtils.decodeTextFromConfig("upgrade_max_placeholder");
+                } else {
+                    balNext = XSHandler.getSubClanUpgrades().get(xsGuilds.getSubGuilds().get(server).getLevel()+1).getNextUpgrades().get("BANK_CAPACITY");
+                }
+                str = str.replace("%guild_max_balance_next_(server)%",balNext);
             }
-            str = str.replace("%guild_max_balance_next_(server)%",balNext);
         }
         if(mHomeNext.find()) {
             String homeNext;
@@ -187,6 +218,15 @@ public class XSUtils {
                 reqPoints = df.format(XSHandler.getSubClanUpgrades().get(xsGuilds.getSubGuilds().get(server).getLevel()+1).getPricePoints());
             }
             str = str.replace("%required_points%",reqPoints);
+        }
+        if(str.contains("%required_main_points%")) {
+            String reqPoints;
+            if(!XSHandler.getMainClanUpgrades().containsKey(xsGuilds.getGuildLevel()+1)) { //reach max level
+                reqPoints = "-";
+            } else {
+                reqPoints = df.format(XSHandler.getMainClanUpgrades().get(xsGuilds.getGuildLevel()+1).getPricePoints());
+            }
+            str = str.replace("%required_main_points%",reqPoints);
         }
 
         str = str.replace("%guild_name%",xsGuilds.getGuildName());

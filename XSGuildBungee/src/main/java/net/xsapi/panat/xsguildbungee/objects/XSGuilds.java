@@ -92,6 +92,10 @@ public class XSGuilds {
         return guildName;
     }
 
+    public void setGuildLevel(int guildLevel) {
+        this.guildLevel = guildLevel;
+    }
+
     public String getRealName() {
         return ChatColor.stripColor(guildName);
     }

@@ -8,5 +8,6 @@ public class configLoader {
         new messagesConfig().loadConfigu();
         new menuConfig().loadConfigu(XS_FILE.MAIN_MENU.toString().toLowerCase());
         new menuConfig().loadConfigu(XS_FILE.UPGRADE_MENU.toString().toLowerCase());
+        new menuConfig().loadConfigu(XS_FILE.UPGRADE_MAIN_MENU.toString().toLowerCase());
     }
 }

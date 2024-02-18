@@ -15,10 +15,14 @@ import java.util.HashMap;
 
 public class XSMenuHandler {
 
-    private static HashMap<Player,HashMap<Integer, String>> actionClicked = new HashMap<>();
+    private static HashMap<Player,HashMap<Integer, String>> leftActionClicked = new HashMap<>();
+    private static HashMap<Player,HashMap<Integer, String>> rightActionClicked = new HashMap<>();
 
-    public static HashMap<Player,HashMap<Integer, String>> getActionClicked() {
-        return actionClicked;
+    public static HashMap<Player,HashMap<Integer, String>> getLeftActionClicked() {
+        return leftActionClicked;
+    }
+    public static HashMap<Player,HashMap<Integer, String>> getRightActionClicked() {
+        return rightActionClicked;
     }
 
     public static void openMenu(Player p, XS_FILE xsFile, XSGuilds xsGuilds) {
@@ -29,7 +33,8 @@ public class XSMenuHandler {
 
         String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
         HashMap<String, ItemStack> items = new HashMap<>();
-        getActionClicked().put(p,new HashMap<>());
+        getLeftActionClicked().put(p,new HashMap<>());
+        getRightActionClicked().put(p,new HashMap<>());
 
         for(String item : menuConfig.getConfig(xsFile).getConfigurationSection("configuration.items").getKeys(false)) {
             ItemStack it = XSUtils.decodeItemFromConfig(item,xsFile);
@@ -42,8 +47,12 @@ public class XSMenuHandler {
                 ItemStack item = items.get(key);
                 int slot = symbol+(rows*9);
 
-                if(menuConfig.getConfig(xsFile).get("configuration.items."+key+".action") != null) {
-                    XSMenuHandler.getActionClicked().get(p).put(slot,menuConfig.getConfig(xsFile).getString("configuration.items."+key+".action"));
+                if(menuConfig.getConfig(xsFile).get("configuration.items."+key+".action_left_click") != null) {
+                    XSMenuHandler.getLeftActionClicked().get(p).put(slot,menuConfig.getConfig(xsFile).getString("configuration.items."+key+".action_left_click"));
+                }
+
+                if(menuConfig.getConfig(xsFile).get("configuration.items."+key+".action_right_click") != null) {
+                    XSMenuHandler.getRightActionClicked().get(p).put(slot,menuConfig.getConfig(xsFile).getString("configuration.items."+key+".action_right_click"));
                 }
 
                 ArrayList<String> lore = new ArrayList<>();

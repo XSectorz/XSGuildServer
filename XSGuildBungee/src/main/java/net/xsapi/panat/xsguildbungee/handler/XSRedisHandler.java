@@ -422,12 +422,26 @@ public class XSRedisHandler {
                                 xsSubGuilds.setMaxHome(Integer.parseInt(XSHandler.subClanUpgrades.get(newLvl).getNextUpgrades().get("HOME")));
                                 xsSubGuilds.setMaxBalance(Integer.parseInt(XSHandler.subClanUpgrades.get(newLvl).getNextUpgrades().get("BANK_CAPACITY")));
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
-                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
-                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPGRADE_RES+"<SPLIT>"+guild+";"+newLvl);
-                                    }
+                                for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + server)) {
+                                    XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPGRADE_RES+"<SPLIT>"+guild+";"+newLvl);
                                 }
                                 //XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+,XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+guild+";"+homeN+";"+player);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPGRADE_MAIN_REQ.toString())) {
+                                String guild = arguments.split(";")[0];
+                                String level = arguments.split(";")[1];
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                double reqPoints = XSHandler.mainClanUpgrades.get(Integer.parseInt(level)).getPricePoints();
+                                xsGuilds.setBalance(xsGuilds.getBalance()-reqPoints);
+                                int newLvl = Integer.parseInt(level);
+                                xsGuilds.setGuildLevel(newLvl);
+                                xsGuilds.setMaxMembers(Integer.parseInt(XSHandler.mainClanUpgrades.get(newLvl).getNextUpgrades().get("MEMBERS")));
+                                xsGuilds.setMaxBalance(Integer.parseInt(XSHandler.mainClanUpgrades.get(newLvl).getNextUpgrades().get("BANK_CAPACITY")));
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
+                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPGRADE_MAIN_RES+"<SPLIT>"+guild+";"+newLvl);
+                                    }
+                                }
                             }
 
                         }
