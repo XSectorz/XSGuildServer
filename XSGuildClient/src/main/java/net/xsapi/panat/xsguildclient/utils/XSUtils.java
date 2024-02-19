@@ -29,6 +29,26 @@ import java.util.regex.Pattern;
 
 public class XSUtils {
 
+    public static ItemStack decodePlaceholderItems(ItemStack item,XSGuilds xsGuilds,String server,String playerName) {
+        ArrayList<String> lore = new ArrayList<>();
+
+        if(item.hasItemMeta() && item.getItemMeta().hasLore()) {
+            for(String str : item.getItemMeta().getLore()) {
+                lore.add(XSUtils.decodeStringWithPlaceholder(str,xsGuilds,server,playerName));
+            }
+            ItemMeta meta = item.getItemMeta();
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+        }
+        if(item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(XSUtils.decodeStringWithPlaceholder(item.getItemMeta().getDisplayName(),xsGuilds,server,playerName));
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
+
     public static String decodeText(String str) {
         Component parsedMessage = MiniMessage.builder().build().deserialize(str);
         String legacy = LegacyComponentSerializer.legacyAmpersand().serialize(parsedMessage);
@@ -48,7 +68,7 @@ public class XSUtils {
         return LegacyComponentSerializer.legacyAmpersand().serialize(parsedMessage);
     }
 
-    public static String decodeStringWithPlaceholder(String str, XSGuilds xsGuilds,String server) {
+    public static String decodeStringWithPlaceholder(String str, XSGuilds xsGuilds,String server,String playername) {
         String patternsBalance = "%guild_balance_[a-zA-Z0-9_()]+%";
         String patternsBalanceMax = "%guild_max_balance_[a-zA-Z0-9_()]+%";
         String patternsMember = "%guild_home_[a-zA-Z0-9_()]+%";
@@ -229,6 +249,11 @@ public class XSUtils {
             str = str.replace("%required_main_points%",reqPoints);
         }
 
+        str = str.replace("%guild_leader_rank%",decodeTextFromConfig("ranks.leader"));
+        str = str.replace("%guild_sub_leader_rank%",decodeTextFromConfig("ranks.sub_leader"));
+        str = str.replace("%guild_member_rank%",decodeTextFromConfig("ranks.member"));
+        str = str.replace("%guild_new_member_rank%",decodeTextFromConfig("ranks.new_member"));
+        str = str.replace("%player_name%",playername);
         str = str.replace("%guild_name%",xsGuilds.getGuildName());
         str = str.replace("%guild_members%",String.valueOf(xsGuilds.getMembers().size()));
         str = str.replace("%guild_max_members%",String.valueOf(xsGuilds.getMaxMembers()));
@@ -237,29 +262,29 @@ public class XSUtils {
         return str;
     }
 
-    public static ItemStack decodeItemFromConfig(String symbol, XS_FILE xsFile) {
+    public static ItemStack decodeItemFromConfig(String path, XS_FILE xsFile,String player) {
 
         Configuration conf = menuConfig.getConfig(xsFile);
-        String display = XSUtils.decodeText(conf.getString("configuration.items."+symbol+".display"));
+        String display = XSUtils.decodeText(conf.getString(path+".display"));
         Material mat;
         int modelData = 0;
 
-        if(conf.get("configuration.items."+symbol+".customModelData") != null) {
-            modelData = (conf.getInt("configuration.items."+symbol+".customModelData"));
+        if(conf.get(path+".customModelData") != null) {
+            modelData = (conf.getInt(path+".customModelData"));
         }
 
-        int amount = (conf.getInt("configuration.items."+symbol+".amount"));
+        int amount = (conf.getInt(path+".amount"));
         ArrayList<String> lores = new ArrayList<>();
 
-        for(String lore : conf.getStringList("configuration.items."+symbol+".lore")) {
+        for(String lore : conf.getStringList(path+".lore")) {
             lores.add(XSUtils.decodeText(lore));
         }
 
         ItemStack it;
 
-        if(conf.getString("configuration.items."+symbol+".material").startsWith("custom_head")) {
+        if(conf.getString(path+".material").startsWith("custom_head")) {
             mat = Material.PLAYER_HEAD;
-            String value = conf.getString("configuration.items."+symbol+".material").replace("custom_head-","");
+            String value = conf.getString(path+".material").replace("custom_head-","");
 
             it = new ItemStack(mat, 1);
             SkullMeta meta = (SkullMeta) it.getItemMeta();
@@ -277,8 +302,23 @@ public class XSUtils {
             } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
             }
             it.setItemMeta(meta);
+        } else if(conf.getString(path+".material").startsWith("player_head")) {
+            mat = Material.PLAYER_HEAD;
+            String pName = conf.getString(path+".material").replace("player_head-","");
+            it = new ItemStack(mat, 1);
+            SkullMeta meta = (SkullMeta) it.getItemMeta();
+
+            if(pName.equalsIgnoreCase("%player%")) {
+                meta.setOwningPlayer(Bukkit.getOfflinePlayer(player));
+            } else {
+                meta.setOwningPlayer(Bukkit.getOfflinePlayer(pName));
+            }
+            meta.setDisplayName(display);
+            meta.setLore(lores);
+            meta.setCustomModelData(modelData);
+            it.setItemMeta(meta);
         } else {
-            mat = Material.valueOf(conf.getString("configuration.items."+symbol+".material"));
+            mat = Material.valueOf(conf.getString(path+".material"));
             it = new ItemStack(mat,amount);
             if(it.getType() != Material.AIR) {
                 ItemMeta meta = it.getItemMeta();

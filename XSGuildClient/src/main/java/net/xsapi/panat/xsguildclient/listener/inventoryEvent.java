@@ -17,12 +17,14 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class inventoryEvent implements Listener {
 
     public void handleClick(ClickType clickType,Player p,int slot) {
         HashMap<Integer, String> data = new HashMap<>();
-
+        String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+        XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
         if(clickType.equals(ClickType.LEFT)) {
             data = XSMenuHandler.getLeftActionClicked().get(p);
         } else if(clickType.equals(ClickType.RIGHT)) {
@@ -41,8 +43,6 @@ public class inventoryEvent implements Listener {
                 double havePoints = 0;
                 double haveCoins = 0;
 
-                String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
-                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                 String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
                 XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
                 int nextLvl = 0;
@@ -81,13 +81,22 @@ public class inventoryEvent implements Listener {
                 p.closeInventory();
 
             } else if(action.equalsIgnoreCase("upgrade:menu")) {
-                String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
-                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                 XSMenuHandler.openMenu(p, XS_FILE.UPGRADE_MENU,xsGuilds);
             } else if(action.equalsIgnoreCase("upgrade:mainmenu")) {
-                String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
-                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                 XSMenuHandler.openMenu(p, XS_FILE.UPGRADE_MAIN_MENU,xsGuilds);
+            } else if(action.equalsIgnoreCase("menu:mainmenu")) {
+                XSMenuHandler.getPlayerPage().put(p,1);
+                XSMenuHandler.openMenu(p, XS_FILE.MEMBERS_MENU,xsGuilds);
+            } else if(action.equalsIgnoreCase("back_page:members")) {
+                if(XSMenuHandler.getPlayerPage().get(p) > 1) {
+                    XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)-1);
+                }
+            } else if(action.equalsIgnoreCase("next_page:members")) {
+                List<String> memberSlot = menuConfig.getConfig(XS_FILE.MEMBERS_MENU).getStringList("condition_configuration.member_slot");
+                int index = (XSMenuHandler.getPlayerPage().get(p)*memberSlot.size())-memberSlot.size();
+                if(index+memberSlot.size() < xsGuilds.getClanmates().size()) {
+                    XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)+1);
+                }
             }
         }
     }
@@ -97,7 +106,8 @@ public class inventoryEvent implements Listener {
         Player p = (Player) e.getWhoClicked();
         if(e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.MAIN_MENU).getString("configuration.title")))
         || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.UPGRADE_MENU).getString("configuration.title")))
-        || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.UPGRADE_MAIN_MENU).getString("configuration.title")))) {
+        || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.UPGRADE_MAIN_MENU).getString("configuration.title")))
+                || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.MEMBERS_MENU).getString("configuration.title")))) {
 
            /* for(Map.Entry<Integer,String> val : XSMenuHandler.getActionClicked().get(p).entrySet()) {
                 Bukkit.broadcastMessage(val.getKey() + "; " + val.getValue());

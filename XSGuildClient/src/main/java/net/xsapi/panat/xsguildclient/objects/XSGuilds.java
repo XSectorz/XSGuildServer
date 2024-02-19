@@ -17,7 +17,7 @@ public class XSGuilds {
     public HashMap<String,Long> pendingInvite = new HashMap<>();
     public String leader;
     public ArrayList<String> subleader = new ArrayList<>();
-
+    public ArrayList<String> clanmates = new ArrayList<>();
     public double balance;
     public double maxBalance;
     public int maxMembers;
@@ -27,6 +27,14 @@ public class XSGuilds {
         this.guildName = guildName;
         this.guildLevel = guildLevel;
         this.guildRealName = guildRealName;
+    }
+
+    public ArrayList<String> getClanmates() {
+        return clanmates;
+    }
+
+    public void setClanmates(ArrayList<String> clanmates) {
+        this.clanmates = clanmates;
     }
     public int getMaxMembers() {
         return maxMembers;

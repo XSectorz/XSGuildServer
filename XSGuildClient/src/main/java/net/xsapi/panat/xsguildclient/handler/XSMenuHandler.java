@@ -12,17 +12,23 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class XSMenuHandler {
 
     private static HashMap<Player,HashMap<Integer, String>> leftActionClicked = new HashMap<>();
     private static HashMap<Player,HashMap<Integer, String>> rightActionClicked = new HashMap<>();
+    private static HashMap<Player,Integer> playerPage = new HashMap<>();
 
     public static HashMap<Player,HashMap<Integer, String>> getLeftActionClicked() {
         return leftActionClicked;
     }
     public static HashMap<Player,HashMap<Integer, String>> getRightActionClicked() {
         return rightActionClicked;
+    }
+    public static HashMap<Player,Integer> getPlayerPage() {
+        return playerPage;
     }
 
     public static void openMenu(Player p, XS_FILE xsFile, XSGuilds xsGuilds) {
@@ -36,10 +42,11 @@ public class XSMenuHandler {
         getLeftActionClicked().put(p,new HashMap<>());
         getRightActionClicked().put(p,new HashMap<>());
 
-        for(String item : menuConfig.getConfig(xsFile).getConfigurationSection("configuration.items").getKeys(false)) {
-            ItemStack it = XSUtils.decodeItemFromConfig(item,xsFile);
-            items.put(item,it);
+        for(String symbol : menuConfig.getConfig(xsFile).getConfigurationSection("configuration.items").getKeys(false)) {
+            ItemStack it = XSUtils.decodeItemFromConfig("configuration.items."+symbol,xsFile,p.getName());
+            items.put(symbol,it);
         }
+
 
         for(int rows = 0 ; rows < menuConfig.getConfig(xsFile).getStringList("configuration.style").size() ; rows++) {
             for(int symbol = 0 ; symbol < menuConfig.getConfig(xsFile).getStringList("configuration.style").get(rows).split(" ").length ; symbol++) {
@@ -55,23 +62,55 @@ public class XSMenuHandler {
                     XSMenuHandler.getRightActionClicked().get(p).put(slot,menuConfig.getConfig(xsFile).getString("configuration.items."+key+".action_right_click"));
                 }
 
-                ArrayList<String> lore = new ArrayList<>();
+                inv.setItem(slot,XSUtils.decodePlaceholderItems(item,xsGuilds,server,p.getName()));
+            }
+        }
 
-                if(item.hasItemMeta() && item.getItemMeta().hasLore()) {
-                    for(String str : item.getItemMeta().getLore()) {
-                        lore.add(XSUtils.decodeStringWithPlaceholder(str,xsGuilds,server));
-                    }
-                    ItemMeta meta = item.getItemMeta();
-                    meta.setLore(lore);
-                    item.setItemMeta(meta);
-                }
-                if(item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
-                    ItemMeta meta = item.getItemMeta();
-                    meta.setDisplayName(XSUtils.decodeStringWithPlaceholder(item.getItemMeta().getDisplayName(),xsGuilds,server));
-                    item.setItemMeta(meta);
+        if(xsFile.equals(XS_FILE.MEMBERS_MENU)) {
+            int leaderSlot = menuConfig.getConfig(xsFile).getInt("condition_configuration.leader_slot");
+            ItemStack leaderItem = XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.leader_profile",xsFile,xsGuilds.getLeader()),xsGuilds,server,xsGuilds.getLeader());
+            inv.setItem(leaderSlot,leaderItem);
+
+            List<String> sub_leaderSlot = menuConfig.getConfig(xsFile).getStringList("condition_configuration.subLeader_slot");
+            for(String slot : sub_leaderSlot) {
+                inv.setItem(Integer.parseInt(slot), XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.barrier",xsFile,p.getName()),xsGuilds,server,""));
+            }
+
+            for(int i = 0 ; i < xsGuilds.getSubleader().size() ; i++) {
+                inv.setItem(Integer.parseInt(sub_leaderSlot.get(i)), XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.subLeader_profile",xsFile,
+                        xsGuilds.getSubleader().get(i)),xsGuilds,server,xsGuilds.getSubleader().get(i)));
+            }
+            List<String> memberSlot = menuConfig.getConfig(xsFile).getStringList("condition_configuration.member_slot");
+            int index = (getPlayerPage().get(p)*memberSlot.size())-memberSlot.size();
+
+            for(int i = index ; i < memberSlot.size()* getPlayerPage().get(p) ; i++) {
+
+                if(i >= xsGuilds.getClanmates().size()) {
+                    break;
                 }
 
-                inv.setItem(slot,item);
+                if(xsGuilds.getMembers().get(xsGuilds.getClanmates().get(i)).equalsIgnoreCase("MEMBER")) {
+                    inv.setItem(Integer.parseInt(memberSlot.get(i)), XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.member_profile",xsFile,
+                            xsGuilds.getClanmates().get(i)),xsGuilds,server,xsGuilds.getClanmates().get(i)));
+                } else {
+                    inv.setItem(Integer.parseInt(memberSlot.get(i)), XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.new_member_profile",xsFile,
+                            xsGuilds.getClanmates().get(i)),xsGuilds,server,xsGuilds.getClanmates().get(i)));
+                }
+            }
+
+            int backSlot = menuConfig.getConfig(xsFile).getInt("condition_configuration.back_slot");
+            int nextSlot = menuConfig.getConfig(xsFile).getInt("condition_configuration.next_slot");
+
+            if(getPlayerPage().get(p) > 1) {
+                inv.setItem(backSlot, XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.back_available",xsFile,p.getName()),xsGuilds,server,p.getName()));
+            } else {
+                inv.setItem(backSlot, XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.back_un_available",xsFile,p.getName()),xsGuilds,server,p.getName()));
+            }
+
+            if(index+memberSlot.size() < xsGuilds.getClanmates().size()) {
+                inv.setItem(nextSlot, XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.next_available",xsFile,p.getName()),xsGuilds,server,p.getName()));
+            } else {
+                inv.setItem(nextSlot, XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.next_un_available",xsFile,p.getName()),xsGuilds,server,p.getName()));
             }
         }
 

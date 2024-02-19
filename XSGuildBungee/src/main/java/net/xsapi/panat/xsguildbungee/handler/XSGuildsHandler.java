@@ -122,6 +122,8 @@ public class XSGuildsHandler {
                         xsGuilds.setLeader(name);
                     } else if(rank.equalsIgnoreCase(XSGUILD_POSITIONS.SUB_LEADER.toString())) {
                         xsGuilds.getSubleader().add(name);
+                    } else {
+                        xsGuilds.getClanmates().add(name);
                     }
                 }
 

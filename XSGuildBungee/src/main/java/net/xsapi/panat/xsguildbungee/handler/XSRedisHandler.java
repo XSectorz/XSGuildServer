@@ -188,6 +188,7 @@ public class XSRedisHandler {
                                         if(respondType.equalsIgnoreCase("accept")) {
 
                                             xsGuilds.getMembers().put(player,XSGUILD_POSITIONS.NEW_MEMBER.toString());
+                                            xsGuilds.getClanmates().add(player);
                                             XSGuildsHandler.getPlayers().put(player,guild);
 
                                             XSGuildsHandler.updateToAllServer(xsGuilds);
@@ -222,6 +223,9 @@ public class XSRedisHandler {
                                 XSGuildsHandler.getPlayers().remove(player);
                                 XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                                 xsGuilds.getMembers().remove(player);
+                                if(xsGuilds.getClanmates().contains(player)) {
+                                    xsGuilds.getClanmates().remove(player);
+                                }
 
                                 if(XSHandler.getPlayerInGuildChat().contains(player)) {
                                     XSHandler.getPlayerInGuildChat().remove(player);
@@ -237,6 +241,9 @@ public class XSRedisHandler {
                                 xsGuilds.getMembers().remove(player);
                                 if(XSHandler.getPlayerInGuildChat().contains(player)) {
                                     XSHandler.getPlayerInGuildChat().remove(player);
+                                }
+                                if(xsGuilds.getClanmates().contains(player)) {
+                                    xsGuilds.getClanmates().remove(player);
                                 }
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
 
@@ -255,6 +262,10 @@ public class XSRedisHandler {
                                 xsGuilds.setLeader(player);
                                 xsGuilds.getMembers().put(player, XSGUILD_POSITIONS.LEADER.toString());
                                 xsGuilds.getMembers().put(leader, XSGUILD_POSITIONS.MEMBER.toString());
+                                xsGuilds.getClanmates().add(leader);
+                                if(xsGuilds.getClanmates().contains(player)) {
+                                    xsGuilds.getClanmates().remove(player);
+                                }
 
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
 
@@ -273,6 +284,11 @@ public class XSRedisHandler {
                                     xsGuilds.getSubleader().add(player);
                                 }
                                 xsGuilds.getMembers().put(player,newRank);
+                                if(newRank.equalsIgnoreCase("SUB_LEADER")) {
+                                    if(xsGuilds.getClanmates().contains(player)) {
+                                        xsGuilds.getClanmates().remove(player);
+                                    }
+                                }
 
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
 
@@ -288,10 +304,16 @@ public class XSRedisHandler {
                                 String newRank = arguments.split(";")[2].toUpperCase();
 
                                 XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
-                                if(newRank.equalsIgnoreCase(XSGUILD_POSITIONS.SUB_LEADER.toString())) {
+                                if(xsGuilds.getSubleader().contains(player)) {
                                     xsGuilds.getSubleader().remove(player);
                                 }
                                 xsGuilds.getMembers().put(player,newRank);
+
+                                if(newRank.equalsIgnoreCase("MEMBER") || newRank.equalsIgnoreCase("NEW_MEMBER")) {
+                                    if(!xsGuilds.getClanmates().contains(player)) {
+                                        xsGuilds.getClanmates().add(player);
+                                    }
+                                }
 
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
 
