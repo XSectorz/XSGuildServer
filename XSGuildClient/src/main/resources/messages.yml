@@ -10,7 +10,7 @@ system:
     home: "<color:#4A404B>▪ <color:#D1A81D>/xsguild home <h-name> <white>วาร์ปไปยังบ้านกิลด์"
     promote: "<color:#4A404B>▪ <color:#D1A81D>/xsguild promote <p-name> <white>เลื่อนระดับ"
     demote: "<color:#4A404B>▪ <color:#D1A81D>/xsguild demote <p-name> <white>ลดระดับ"
-    gui: "<color:#4A404B>▪ <color:#D1A81D>/xsguild gui <white>เปิดเมนูจัดการกิลด์"
+    gui: "<color:#4A404B>▪ <color:#D1A81D>/xsguild menu <white>เปิดเมนูจัดการกิลด์"
     leave: "<color:#4A404B>▪ <color:#D1A81D>/xsguild leave <white>เพื่อออกจากกิลด์"
     disband: "<color:#4A404B>▪ <color:#D1A81D>/xsguild disband <white>ยุบกิลด์"
     chat: "<color:#4A404B>▪ <color:#D1A81D>/xsguild chat <white>เปิดโหมดคุยแบบกิลด์"
