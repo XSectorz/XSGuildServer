@@ -118,6 +118,7 @@ public class XSRedisHandler {
                                 String mainClanUpgradeJson = gson.toJson(XSHandler.mainClanUpgrades);
                                 String subClanUpgradeJson = gson.toJson(XSHandler.subClanUpgrades);
                                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server, XSDATA_TYPE.SENT_UPGRADES_INFO+"<SPLIT>"+mainClanUpgradeJson+";"+subClanUpgradeJson);;
+                                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server, XSDATA_TYPE.SET_PRICE+"<SPLIT>"+XSHandler.getCreatePrice());
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.DISBAND.toString())) {
                                 String guild = arguments.split(";")[1];
                                 String player = arguments.split(";")[2];

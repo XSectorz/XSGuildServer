@@ -27,6 +27,15 @@ public class XSHandler {
         return subChannel;
     }
 
+    private static double create_guild_price = 0;
+
+    public static double getCreatePrice() {
+        return create_guild_price;
+    }
+
+    public static void setCreate_guild_price(double create_guild_price) {
+        XSHandler.create_guild_price = create_guild_price;
+    }
 
     public static ArrayList<String> getPlayerInGuildChat() {
         return playerInGuildChat;
@@ -84,6 +93,8 @@ public class XSHandler {
                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer, XSDATA_TYPE.SENT_UPGRADES_INFO+"<SPLIT>"+mainClanUpgradeJson+";"+subClanUpgradeJson);
             }
         }
+
+        setCreate_guild_price(mainConfig.getConfig().getInt("create_guild_price"));
     }
 
     public static void subChannel() {

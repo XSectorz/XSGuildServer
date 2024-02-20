@@ -190,6 +190,12 @@ public class commands implements CommandExecutor {
                             p.sendMessage(XSUtils.decodeTextFromConfig("already_in_guild"));
                             return false;
                         }
+
+                        if(XSHandler.getSCPoint().look(p.getUniqueId()) < XSHandler.getCreatePrice()) {
+                            p.sendMessage(XSUtils.decodeTextFromConfig("create_cant_afford"));
+                            return false;
+                        }
+
                         String name = args[1].replace('&','§');
 
                         name = name.replaceAll("<[^<>]*>", "");
@@ -205,7 +211,7 @@ public class commands implements CommandExecutor {
                         }
 
                         String nameWithColor = args[1].replace('&','§');
-
+                        XSHandler.getSCPoint().take(p.getUniqueId(),(int) XSHandler.getCreatePrice());
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.CREATE +"<SPLIT>" + p.getName() + ";" + ChatColor.stripColor(name) + ";" + nameWithColor);
                         p.sendMessage(XSUtils.decodeTextFromConfig("create").replace("%guild_name%",nameWithColor));
                         return true;

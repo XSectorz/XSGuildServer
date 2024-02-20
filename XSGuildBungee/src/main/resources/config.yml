@@ -12,6 +12,8 @@ redis:
 
 auto-saved: 60 #in seconds
 
+create_guild_price: 1000
+
 guilds-group:
   survival:
     - survival/01

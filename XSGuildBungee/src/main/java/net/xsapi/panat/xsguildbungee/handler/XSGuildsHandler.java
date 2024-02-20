@@ -77,6 +77,7 @@ public class XSGuildsHandler {
                 Gson gson = new Gson();
                 String guildJson = gson.toJson(XSGuildsHandler.getGuildList());
                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subserver, XSDATA_TYPE.FORCE_LOAD_ALL+"<SPLIT>"+guildJson);
+                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subserver, XSDATA_TYPE.SET_PRICE+"<SPLIT>"+XSHandler.getCreatePrice());
             }
         }
     }

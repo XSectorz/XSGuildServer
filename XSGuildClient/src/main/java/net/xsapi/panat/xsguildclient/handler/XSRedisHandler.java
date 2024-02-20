@@ -365,6 +365,9 @@ public class XSRedisHandler {
                                         target.sendMessage(XSUtils.decodeTextFromConfig("upgrade_main_success").replace("%guild_level%", lvl));
                                     }
                                 }
+                            }  else if(type.equalsIgnoreCase(XSDATA_TYPE.SET_PRICE.toString())) {
+                                double price = Double.parseDouble(arguments.split(";")[0]);
+                                XSHandler.setCreatePrice(price);
                             }
                         }
                     }

@@ -34,6 +34,8 @@ public class XSTabComplete implements TabCompleter {
                 completions.add("leave");
                 completions.add("disband");
                 completions.add("chat");
+                completions.add("deposit");
+                completions.add("withdraw");
             } else if (args.length == 2) {
                 if(args[0].equalsIgnoreCase("home")) {
                     if(!XSGuildsHandler.getPlayers().containsKey(p.getName())) {
@@ -50,6 +52,9 @@ public class XSTabComplete implements TabCompleter {
                     }
                     Set<String> keySet = xsSubGuilds.getHomeList().keySet();
                     return new ArrayList<>(keySet);
+                } else if(args[0].equalsIgnoreCase("deposit") || args[0].equalsIgnoreCase("withdraw")) {
+                    completions.add("points");
+                    completions.add("coins");
                 }
             }
         }

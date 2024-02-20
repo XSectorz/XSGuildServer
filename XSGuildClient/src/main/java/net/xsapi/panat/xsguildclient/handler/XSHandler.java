@@ -33,6 +33,8 @@ public class XSHandler {
 
     private static XSPlaceholders xsPlaceholders;
 
+    private static double createPrice;
+
     private static ArrayList<String> playerInGuildChat = new ArrayList<>();
 
     private static HashMap<Integer, XSUpgrades> mainClanUpgrades = new HashMap<>();
@@ -47,6 +49,14 @@ public class XSHandler {
 
     public static String getServername() {
         return servername;
+    }
+
+    public static double getCreatePrice() {
+        return createPrice;
+    }
+
+    public static void setCreatePrice(double createPrice) {
+        XSHandler.createPrice = createPrice;
     }
 
     public static HashMap<Integer, XSUpgrades> getMainClanUpgrades() {
