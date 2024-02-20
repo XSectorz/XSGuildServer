@@ -5,9 +5,12 @@ import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
 import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
 import net.xsapi.panat.xsguildbungee.objects.XSSubGuilds;
+import net.xsapi.panat.xsguildbungee.utils.XSPERMS_TYPE;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class XSDatabaseHandler {
@@ -44,7 +47,8 @@ public class XSDatabaseHandler {
             + "GuildName TEXT, "
             + "Players TEXT, "
             + "Balance DOUBLE, "
-            + "GuildLevel INT"
+            + "GuildLevel INT, "
+            + "Permission TEXT"
             + ")";
 
     private final static String SUB_SQL_QUERY = " ("
@@ -118,8 +122,8 @@ public class XSDatabaseHandler {
         }
     }
     private static void createMainGuildServer(Connection connection,String guild,String guildName,String leader) {
-        String insertQuery = "INSERT INTO " + "xsguilds_bungee_main" + " (Guild, GuildName, Players, Balance, GuildLevel) "
-                + "VALUES (?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO " + "xsguilds_bungee_main" + " (Guild, GuildName, Players, Balance, GuildLevel, Permission) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatementInsert = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatementInsert.setString(1, guild);
@@ -127,6 +131,21 @@ public class XSDatabaseHandler {
             preparedStatementInsert.setString(3, "[LEADER:" + leader + "]");
             preparedStatementInsert.setDouble(4, 0);
             preparedStatementInsert.setInt(5, 1);
+
+            //FORMAT [SUBLEADER:[WITHDRAW:FALSE,DEPOSIT:FALSE], MEMBER:[WITHDRAW:TRUE,DEPOSIT:FALSE]]
+
+            ArrayList<String> rankList = new ArrayList<>(Arrays.asList("SUB_LEADER","MEMBER","NEW_MEMBER"));
+            ArrayList<String> permList = new ArrayList<>();
+            for(XSPERMS_TYPE xspermsType : XSPERMS_TYPE.values()) {
+                permList.add(xspermsType.name()+"<SPLIT>FALSE");
+            }
+            ArrayList<String> data = new ArrayList<>();
+            for(String rank : rankList) {
+                data.add(rank+":"+permList.toString().replace(",",";"));
+            }
+            core.getPlugin().getLogger().info(data.toString());
+
+            preparedStatementInsert.setString(6, data.toString());
             preparedStatementInsert.executeUpdate();
 
             XSGuildsHandler.getPlayers().put(leader,guild); //guild = guild real name
@@ -162,7 +181,7 @@ public class XSDatabaseHandler {
     }
 
     public static void updateMainGuild(Connection connection,XSGuilds xsGuilds) {
-        String updateQuery ="UPDATE xsguilds_bungee_main" + " SET Players = ?, Balance = ?, GuildLevel = ? WHERE id = ?";
+        String updateQuery ="UPDATE xsguilds_bungee_main" + " SET Players = ?, Balance = ?, GuildLevel = ?, Permission = ? WHERE id = ?";
 
         ArrayList<String> members = new ArrayList<>();
 
@@ -174,10 +193,24 @@ public class XSDatabaseHandler {
             preparedStatementInsert.setString(1, members.toString());
             preparedStatementInsert.setDouble(2, xsGuilds.getBalance());
             preparedStatementInsert.setInt(3, xsGuilds.getGuildLevel());
-            preparedStatementInsert.setInt(4, xsGuilds.getGuildID());
-            preparedStatementInsert.executeUpdate();
+
+            preparedStatementInsert.setInt(5, xsGuilds.getGuildID());
 
             //core.getPlugin().getLogger().info("Current Balance " + xsGuilds.getBalance());
+
+            //FORMAT [SUBLEADER:[WITHDRAW:FALSE,DEPOSIT:FALSE], MEMBER:[WITHDRAW:TRUE,DEPOSIT:FALSE]],
+            ArrayList<String> dataPerms = new ArrayList<>();
+
+            for(Map.Entry<String, HashMap<String,Boolean>> data : xsGuilds.getPermission().entrySet()) {
+                String rank = data.getKey();
+                ArrayList<String> perms = new ArrayList<>();
+                for(Map.Entry<String,Boolean> permRank : data.getValue().entrySet()) {
+                    perms.add(permRank.getKey()+"<SPLIT>"+permRank.getValue());
+                }
+                dataPerms.add(rank+":"+perms.toString().replace(",",";"));
+            }
+            preparedStatementInsert.setString(4, dataPerms.toString().replace(" ",""));
+            preparedStatementInsert.executeUpdate();
 
             for (String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                 XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(servers);

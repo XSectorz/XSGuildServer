@@ -21,12 +21,17 @@ public class XSGuilds {
     public double balance;
     public double maxBalance;
     public int maxMembers;
+    public HashMap<String,HashMap<String,Boolean>> permission = new HashMap<>();
 
     public XSGuilds(int guildID,String guildRealName,String guildName,int guildLevel) {
         this.guildID = guildID;
         this.guildName = guildName;
         this.guildLevel = guildLevel;
         this.guildRealName = guildRealName;
+    }
+
+    public HashMap<String, HashMap<String,Boolean>> getPermission() {
+        return permission;
     }
 
     public ArrayList<String> getClanmates() {

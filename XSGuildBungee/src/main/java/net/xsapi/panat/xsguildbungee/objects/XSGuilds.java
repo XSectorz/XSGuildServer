@@ -16,6 +16,7 @@ public class XSGuilds {
     public HashMap<String,XSSubGuilds> subGuilds = new HashMap<>();
 
     public HashMap<String,Long> pendingInvite = new HashMap<>();
+    public HashMap<String,HashMap<String,Boolean>> permission = new HashMap<>();
 
     public String leader;
     public ArrayList<String> subleader = new ArrayList<>();
@@ -33,6 +34,13 @@ public class XSGuilds {
         this.guildRealName = guildRealName;
     }
 
+    public void setPermission(HashMap<String, HashMap<String, Boolean>> permission) {
+        this.permission = permission;
+    }
+
+    public HashMap<String, HashMap<String,Boolean>> getPermission() {
+        return permission;
+    }
 
     public ArrayList<String> getClanmates() {
         return clanmates;

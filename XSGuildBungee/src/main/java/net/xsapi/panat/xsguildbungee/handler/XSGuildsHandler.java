@@ -10,10 +10,7 @@ import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
 import net.xsapi.panat.xsguildbungee.utils.XSGUILD_POSITIONS;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class XSGuildsHandler {
     public static HashMap<String, XSGuilds> guildList = new HashMap<>();
@@ -99,6 +96,7 @@ public class XSGuildsHandler {
                 String members = resultSet.getString("Players");
                 double balance = resultSet.getDouble("Balance");
                 int guildLevel = resultSet.getInt("GuildLevel");
+                String permission = resultSet.getString("Permission");
                 //core.getPlugin().getLogger().info(guildID+"");
                 //core.getPlugin().getLogger().info(guildName);
                 //core.getPlugin().getLogger().info(members);
@@ -127,6 +125,31 @@ public class XSGuildsHandler {
                         xsGuilds.getClanmates().add(name);
                     }
                 }
+
+                //FORMAT [SUB_LEADER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE], MEMBER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE], NEW_MEMBER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE]]
+                HashMap<String,HashMap<String,Boolean>> dataHash = new HashMap<>();
+              //  core.getPlugin().getLogger().info("perms : " + permission);
+                for(String section : permission.split(",")) {
+                   // core.getPlugin().getLogger().info("section : " + section);
+                    String rank = section.split(":")[0].replace("[","");
+                    String perms = section.split(":")[1];
+
+                    HashMap<String,Boolean> permHash = new HashMap<>();
+                    for(String permsData : perms.replace("[","").replace("]","").split(";")) {
+                     //   core.getPlugin().getLogger().info("permData : " + permsData);
+                        String type = permsData.split("<SPLIT>")[0];
+                        Boolean bool = Boolean.getBoolean(permsData.split("<SPLIT>")[1]);
+                        permHash.put(type,bool);
+                    }
+
+                    dataHash.put(rank,permHash);
+
+                }
+
+                xsGuilds.setPermission(dataHash);
+                //core.getPlugin().getLogger().info("----------");
+                //core.getPlugin().getLogger().info(dataHash.toString());
+                //core.getPlugin().getLogger().info("----------");
 
                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                     XSSubGuilds xsSubGuilds =  loadSubGuild(servers,guildID);
