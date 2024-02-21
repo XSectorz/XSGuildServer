@@ -1,0 +1,209 @@
+
+condition_configuration:
+  back_slot: 10
+  next_slot: 17
+  infoUpgrade_slot:
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+  blank_slot:
+    - 20
+    - 21
+    - 22
+    - 23
+    - 24
+    - 25
+    - 29
+    - 30
+    - 31
+    - 32
+    - 33
+    - 34
+    - 38
+    - 39
+    - 40
+    - 41
+    - 42
+    - 43
+  back_available:
+    material: PAPER
+    amount: 1
+    customModelData: 10218
+    display: "<color:#4AD842>ย้อนกลับ"
+    lore: []
+  back_un_available:
+    material: PAPER
+    amount: 1
+    customModelData: 10233
+    display: "<color:#4AD842>ย้อนกลับ"
+    lore: []
+  next_available:
+    material: PAPER
+    amount: 1
+    customModelData: 10219
+    display: "<color:#4AD842>ถัดไป"
+    lore: []
+  next_un_available:
+    material: PAPER
+    amount: 1
+    customModelData: 10234
+    display: "<color:#4AD842>ถัดไป"
+    lore: []
+  'WITHDRAW':
+    material: GOLD_BLOCK
+    amount: 1
+    customModelData: 0
+    display: "<color:#E4C114>ᴡɪᴛʜᴅʀᴀᴡ"
+    lore:
+      - "<reset>"
+      - "<white>อนุญาติให้มีการถอนเงินกิลด์"
+  'DEPOSIT':
+    material: DIAMOND_BLOCK
+    amount: 1
+    customModelData: 0
+    display: "<color:#E4C114>ᴅᴇᴘᴏsɪᴛ"
+    lore:
+      - "<reset>"
+      - "<white>อนุญาติให้มีการฝากเงินกิลด์"
+  'INVITE':
+    material: BRICK
+    amount: 1
+    customModelData: 10042
+    display: "<color:#E4C114>ɪɴᴠɪᴛᴇ"
+    lore:
+      - "<reset>"
+      - "<white>อนุญาติให้เชิญเข้ากิลด์"
+  'KICK':
+    material: PAPER
+    amount: 1
+    customModelData: 10003
+    display: "<color:#E4C114>ᴋɪᴄᴋ"
+    lore:
+      - "<reset>"
+      - "<white>อนุญาติให้เตะออกกิลด์"
+  'HOME':
+    material: BRICK
+    amount: 1
+    customModelData: 10036
+    display: "<color:#E4C114>ʜᴏᴍᴇ"
+    lore:
+      - "<reset>"
+      - "<white>อนุญาติฟังก์ชั่นบ้าน"
+      - "<color:#4A404B>▸ <gray>delhome ลบบ้านกิลด์"
+      - "<color:#4A404B>▸ <gray>sethome เพิ่มบ้านกิลด์"
+  'RANK':
+    material: BRICK
+    amount: 1
+    customModelData: 10057
+    display: "<color:#E4C114>ʀᴀɴᴋ ᴜᴘɢʀᴀᴅᴇ"
+    lore:
+      - "<reset>"
+      - "<white>อนุญาติฟังก์ยศกิลด์"
+      - "<color:#4A404B>▸ <gray>promote อัพเกรดยศกิลด์"
+      - "<color:#4A404B>▸ <gray>demote ลดยศกิลด์"
+  'SHOP_MANAGES':
+    material: BRICK
+    amount: 1
+    customModelData: 10059
+    display: "<color:#E4C114>sʜᴏᴘ ʀᴇɢɪsᴛᴇʀ"
+    lore:
+      - "<reset>"
+      - "<white>อนุญาติฟังก์ขั่นร้านค้ากิลด์"
+      - "<color:#4A404B>▸ <gray>manages จัดการสินค้ากิลด์"
+  'SHOP_BOUGHT':
+    material: BRICK
+    amount: 1
+    customModelData: 10059
+    display: "<color:#E4C114>sʜᴏᴘ ʙᴜʏ"
+    lore:
+      - "<reset>"
+      - "<white>อนุญาติซื้อของในร้านค้ากิลด์"
+  'OwnPermission':
+    material: BRICK
+    amount: 1
+    customModelData: 10581
+    display: "<color:#42BF0D>มีสิทธิ <gray>(คลิกเพื่อเปลี่ยน)"
+  'NotOwnPermission':
+    material: BRICK
+    amount: 1
+    customModelData: 10580
+    display: "<color:#BF0D0D>ไม่มีสิทธิ <gray>(คลิกเพื่อเปลี่ยน)"
+
+configuration:
+  title: "<dark_gray>Manage Permission"
+  style:
+    - "@ @ @ @ @ @ @ @ @"
+    - "@ back x x x x x x next"
+    - "@ S x x x x x x @"
+    - "@ M x x x x x x @"
+    - "@ N x x x x x x @"
+    - "@ @ @ y & z @ @ @"
+  items:
+    'back':
+      material: AIR
+      amount: 1
+      action_left_click: "back_page:perms"
+      customModelData: 0
+      display: "&f "
+      lore: []
+    'next':
+      material: AIR
+      amount: 1
+      action_left_click: "next_page:perms"
+      customModelData: 0
+      display: "&f "
+      lore: []
+    '@':
+      material: PAPER
+      amount: 1
+      customModelData: 10230
+      display: "&f "
+      lore: []
+    'z':
+      material: PAPER
+      amount: 1
+      action_left_click: "click:cancel"
+      customModelData: 10224
+      display: "<color:#BF0D0D>ยกเลิก"
+      lore: []
+    'y':
+      material: PAPER
+      amount: 1
+      action_left_click: "click:save"
+      customModelData: 10222
+      display: "<color:#42BF0D>บันทึก"
+      lore: []
+    'x':
+      material: AIR
+      amount: 1
+      customModelData: 0
+      display: "&f "
+      lore: []
+    'S':
+      material: SUGAR
+      amount: 1
+      customModelData: 1013
+      display: "%guild_sub_leader_rank%"
+      lore: []
+    'M':
+      material: SUGAR
+      amount: 1
+      customModelData: 1012
+      display: "%guild_member_rank%"
+      lore: []
+    'N':
+      material: SUGAR
+      amount: 1
+      customModelData: 1011
+      display: "%guild_new_member_rank%"
+      lore: []
+    '&':
+      material: PAPER
+      customModelData: 10215
+      amount: 1
+      action_left_click: "menu:mainmenu"
+      display: "<color:#DF143D>ย้อนกลับ"
+      lore: []

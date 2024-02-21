@@ -10,5 +10,6 @@ public class configLoader {
         new menuConfig().loadConfigu(XS_FILE.UPGRADE_MENU.toString().toLowerCase());
         new menuConfig().loadConfigu(XS_FILE.UPGRADE_MAIN_MENU.toString().toLowerCase());
         new menuConfig().loadConfigu(XS_FILE.MEMBERS_MENU.toString().toLowerCase());
+        new menuConfig().loadConfigu(XS_FILE.PERMISSION_MENU.toString().toLowerCase());
     }
 }

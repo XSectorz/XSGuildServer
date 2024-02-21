@@ -143,7 +143,7 @@ public class XSDatabaseHandler {
             for(String rank : rankList) {
                 data.add(rank+":"+permList.toString().replace(",",";"));
             }
-            core.getPlugin().getLogger().info(data.toString());
+          //  core.getPlugin().getLogger().info(data.toString());
 
             preparedStatementInsert.setString(6, data.toString());
             preparedStatementInsert.executeUpdate();
@@ -209,6 +209,7 @@ public class XSDatabaseHandler {
                 }
                 dataPerms.add(rank+":"+perms.toString().replace(",",";"));
             }
+            //core.getPlugin().getLogger().info("SAVED : " + dataPerms);
             preparedStatementInsert.setString(4, dataPerms.toString().replace(" ",""));
             preparedStatementInsert.executeUpdate();
 

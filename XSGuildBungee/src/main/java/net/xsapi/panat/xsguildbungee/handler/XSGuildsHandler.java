@@ -8,6 +8,7 @@ import net.xsapi.panat.xsguildbungee.objects.XSGuilds;
 import net.xsapi.panat.xsguildbungee.objects.XSSubGuilds;
 import net.xsapi.panat.xsguildbungee.utils.XSDATA_TYPE;
 import net.xsapi.panat.xsguildbungee.utils.XSGUILD_POSITIONS;
+import net.xsapi.panat.xsguildbungee.utils.XSPERMS_TYPE;
 
 import java.sql.*;
 import java.util.*;
@@ -63,6 +64,19 @@ public class XSGuildsHandler {
             xsSubGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.sub.level_1"));
             xsGuilds.getSubGuilds().put(servers,xsSubGuilds);
         }
+
+        ArrayList<String> rankList = new ArrayList<>(Arrays.asList("SUB_LEADER","MEMBER","NEW_MEMBER"));
+
+        HashMap<String,HashMap<String,Boolean>> permData = new HashMap<>();
+        for(String rank : rankList) {
+            HashMap<String,Boolean> perms = new HashMap<>();
+            for(XSPERMS_TYPE xspermsType : XSPERMS_TYPE.values()) {
+                perms.put(xspermsType.toString(),false);
+            }
+            permData.put(rank,perms);
+        }
+        xsGuilds.setPermission(permData);
+
         getGuildList().put(guildRealName,xsGuilds);
         getPlayers().put(leader,guildName);
     }
@@ -128,15 +142,15 @@ public class XSGuildsHandler {
 
                 //FORMAT [SUB_LEADER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE], MEMBER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE], NEW_MEMBER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE]]
                 HashMap<String,HashMap<String,Boolean>> dataHash = new HashMap<>();
-              //  core.getPlugin().getLogger().info("perms : " + permission);
+              // core.getPlugin().getLogger().info("perms : " + permission);
                 for(String section : permission.split(",")) {
-                   // core.getPlugin().getLogger().info("section : " + section);
+                //    core.getPlugin().getLogger().info("section : " + section);
                     String rank = section.split(":")[0].replace("[","");
                     String perms = section.split(":")[1];
 
                     HashMap<String,Boolean> permHash = new HashMap<>();
                     for(String permsData : perms.replace("[","").replace("]","").split(";")) {
-                     //   core.getPlugin().getLogger().info("permData : " + permsData);
+                   //    core.getPlugin().getLogger().info("permData : " + permsData);
                         String type = permsData.split("<SPLIT>")[0];
                         Boolean bool = Boolean.getBoolean(permsData.split("<SPLIT>")[1]);
                         permHash.put(type,bool);

@@ -8,13 +8,16 @@ import net.xsapi.panat.xsguildclient.handler.XSRedisHandler;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.objects.XSSubGuilds;
 import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
+import net.xsapi.panat.xsguildclient.utils.XSPERMS_TYPE;
 import net.xsapi.panat.xsguildclient.utils.XSUtils;
 import net.xsapi.panat.xsguildclient.utils.XS_FILE;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +36,7 @@ public class inventoryEvent implements Listener {
 
         if(data.containsKey(slot)) {
             String action = data.get(slot);
+            String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
             if(action.equalsIgnoreCase("close")) {
                 p.closeInventory();
             } else if(action.startsWith("upgradeGuild")) {
@@ -43,7 +47,6 @@ public class inventoryEvent implements Listener {
                 double havePoints = 0;
                 double haveCoins = 0;
 
-                String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
                 XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
                 int nextLvl = 0;
 
@@ -90,12 +93,30 @@ public class inventoryEvent implements Listener {
             } else if(action.equalsIgnoreCase("back_page:members")) {
                 if(XSMenuHandler.getPlayerPage().get(p) > 1) {
                     XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)-1);
+                    XSMenuHandler.openMenu(p, XS_FILE.MEMBERS_MENU,xsGuilds);
                 }
             } else if(action.equalsIgnoreCase("next_page:members")) {
                 List<String> memberSlot = menuConfig.getConfig(XS_FILE.MEMBERS_MENU).getStringList("condition_configuration.member_slot");
                 int index = (XSMenuHandler.getPlayerPage().get(p)*memberSlot.size())-memberSlot.size();
                 if(index+memberSlot.size() < xsGuilds.getClanmates().size()) {
                     XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)+1);
+                    XSMenuHandler.openMenu(p, XS_FILE.MEMBERS_MENU,xsGuilds);
+                }
+            } else if(action.equalsIgnoreCase("menu:settings")) {
+                XSMenuHandler.getPlayerPage().put(p,1);
+                XSMenuHandler.openMenu(p, XS_FILE.PERMISSION_MENU,xsGuilds);
+            } else if(action.equalsIgnoreCase("back_page:perms")) {
+                if(XSMenuHandler.getPlayerPage().get(p) > 1) {
+                    XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)-1);
+                    XSMenuHandler.updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server);
+                }
+            } else if(action.equalsIgnoreCase("next_page:perms")) {
+                List<String> permsSlot = menuConfig.getConfig(XS_FILE.PERMISSION_MENU).getStringList("condition_configuration.infoUpgrade_slot");
+                int index = (XSMenuHandler.getPlayerPage().get(p)*permsSlot.size())-permsSlot.size();
+
+                if(index+permsSlot.size() < XSPERMS_TYPE.values().length) {
+                    XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)+1);
+                    XSMenuHandler.updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server);
                 }
             }
         }
@@ -107,7 +128,8 @@ public class inventoryEvent implements Listener {
         if(e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.MAIN_MENU).getString("configuration.title")))
         || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.UPGRADE_MENU).getString("configuration.title")))
         || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.UPGRADE_MAIN_MENU).getString("configuration.title")))
-                || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.MEMBERS_MENU).getString("configuration.title")))) {
+                || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.MEMBERS_MENU).getString("configuration.title")))
+                || e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.PERMISSION_MENU).getString("configuration.title")))) {
 
            /* for(Map.Entry<Integer,String> val : XSMenuHandler.getActionClicked().get(p).entrySet()) {
                 Bukkit.broadcastMessage(val.getKey() + "; " + val.getValue());
@@ -120,6 +142,20 @@ public class inventoryEvent implements Listener {
 
             handleClick(e.getClick(),p,e.getSlot());
 
+        }
+    }
+
+    @EventHandler
+    public void onClose(InventoryCloseEvent e) {
+        Player p = (Player) e.getPlayer();
+
+        if(e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.PERMISSION_MENU).getString("configuration.title")))) {
+            if (XSMenuHandler.getPlayerOpenInventory().containsKey(p.getUniqueId())) {
+                XSMenuHandler.getPlayerOpenInventory().remove(p.getUniqueId());
+            }
+            if(XSMenuHandler.getPermsDataPage().containsKey(p)) {
+                XSMenuHandler.getPermsDataPage().remove(p);
+            }
         }
     }
 }

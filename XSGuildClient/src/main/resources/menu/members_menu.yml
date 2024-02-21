@@ -105,6 +105,7 @@ configuration:
       material: PAPER
       amount: 1
       customModelData: 11236
+      action_left_click: "menu:settings"
       display: "<color:#E4C114>การตั้งค่า"
       lore: []
     'y':
