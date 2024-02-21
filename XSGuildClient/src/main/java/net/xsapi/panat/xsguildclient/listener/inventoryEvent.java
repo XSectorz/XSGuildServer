@@ -108,7 +108,7 @@ public class inventoryEvent implements Listener {
             } else if(action.equalsIgnoreCase("back_page:perms")) {
                 if(XSMenuHandler.getPlayerPage().get(p) > 1) {
                     XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)-1);
-                    XSMenuHandler.updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server);
+                    XSMenuHandler.updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server,xsGuilds.getPermission());
                 }
             } else if(action.equalsIgnoreCase("next_page:perms")) {
                 List<String> permsSlot = menuConfig.getConfig(XS_FILE.PERMISSION_MENU).getStringList("condition_configuration.infoUpgrade_slot");
@@ -116,7 +116,7 @@ public class inventoryEvent implements Listener {
 
                 if(index+permsSlot.size() < XSPERMS_TYPE.values().length) {
                     XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)+1);
-                    XSMenuHandler.updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server);
+                    XSMenuHandler.updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server,xsGuilds.getPermission());
                 }
             }
         }
@@ -140,6 +140,19 @@ public class inventoryEvent implements Listener {
                 return;
             }
 
+            if(e.getView().getTitle().equalsIgnoreCase(XSUtils.decodeText(menuConfig.getConfig(XS_FILE.PERMISSION_MENU).getString("configuration.title")))) {
+                if(XSMenuHandler.getPermsSlot().get(p).containsKey(e.getSlot())) {
+                    String rank = XSMenuHandler.getPermsSlot().get(p).get(e.getSlot()).split(":")[0];
+                    String type = XSMenuHandler.getPermsSlot().get(p).get(e.getSlot()).split(":")[1];
+                    String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
+                    String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
+                    XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                    XSMenuHandler.getTempPerms().get(p).get(rank).put(type,!XSMenuHandler.getTempPerms().get(p).get(rank).get(type));
+                    XSMenuHandler.updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server,XSMenuHandler.getTempPerms().get(p));
+                }
+            }
+
             handleClick(e.getClick(),p,e.getSlot());
 
         }
@@ -155,6 +168,9 @@ public class inventoryEvent implements Listener {
             }
             if(XSMenuHandler.getPermsDataPage().containsKey(p)) {
                 XSMenuHandler.getPermsDataPage().remove(p);
+            }
+            if(XSMenuHandler.getTempPerms().containsKey(p)) {
+                XSMenuHandler.getTempPerms().remove(p);
             }
         }
     }

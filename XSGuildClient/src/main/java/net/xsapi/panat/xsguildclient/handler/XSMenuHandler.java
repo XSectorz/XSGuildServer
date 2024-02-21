@@ -21,6 +21,8 @@ public class XSMenuHandler {
     private static HashMap<UUID, Inventory> playerOpenInventory = new HashMap<>();
     private static HashMap<Player,Integer> playerPage = new HashMap<>();
     private static HashMap<Player,ArrayList<String>> permsDataPage = new HashMap<>();
+    private static HashMap<Player,HashMap<Integer,String>> permsSlot = new HashMap<>();
+    private static HashMap<Player,HashMap<String,HashMap<String,Boolean>>> tempPerms = new HashMap<>();
 
     public static HashMap<Player,HashMap<Integer, String>> getLeftActionClicked() {
         return leftActionClicked;
@@ -33,6 +35,14 @@ public class XSMenuHandler {
     }
     public static HashMap<Player,ArrayList<String>> getPermsDataPage() {
         return permsDataPage;
+    }
+
+    public static HashMap<Player, HashMap<String, HashMap<String, Boolean>>> getTempPerms() {
+        return tempPerms;
+    }
+
+    public static HashMap<Player, HashMap<Integer, String>> getPermsSlot() {
+        return permsSlot;
     }
 
     public static HashMap<UUID, Inventory> getPlayerOpenInventory() {
@@ -127,13 +137,26 @@ public class XSMenuHandler {
             if(!getPlayerOpenInventory().containsKey(p.getUniqueId())) {
                 getPlayerOpenInventory().put(p.getUniqueId(),inv);
             }
-            updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server);
+
+            updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server,xsGuilds.getPermission());
+            HashMap<String,HashMap<String,Boolean>> cloneMap = new HashMap<>();
+
+            for(Map.Entry<String,HashMap<String,Boolean>> rank : xsGuilds.getPermission().entrySet()) {
+                HashMap<String,Boolean> permsList = new HashMap<>();
+                for(Map.Entry<String ,Boolean> perms : rank.getValue().entrySet()) {
+                    permsList.put(perms.getKey(),perms.getValue());
+                }
+                cloneMap.put(rank.getKey(),permsList);
+            }
+
+            getTempPerms().put(p,cloneMap);
+
         }
 
         p.openInventory(inv);
     }
 
-    public static void updateInventoryContents(Player p,XS_FILE xsFile,XSGuilds xsGuilds,String server) {
+    public static void updateInventoryContents(Player p,XS_FILE xsFile,XSGuilds xsGuilds,String server,HashMap<String, HashMap<String, Boolean>> tempPerms) {
         Inventory inv = getPlayerOpenInventory().get(p.getUniqueId());
 
         List<String> infoSlot = menuConfig.getConfig(xsFile).getStringList("condition_configuration.infoUpgrade_slot");
@@ -178,19 +201,21 @@ public class XSMenuHandler {
 
         ArrayList<String> rank = new ArrayList<>(Arrays.asList("SUB_LEADER","MEMBER","NEW_MEMBER"));
 
-
+        HashMap<Integer,String> dataInSlot = new HashMap<>();
         for(int slotIndex = 0 ; slotIndex < dataPerms.size() ; slotIndex++) {
             for(int i = 0 ; i < rank.size() ; i++) {
                 int slotToplace = Integer.parseInt(infoSlot.get(slotIndex))+(9*(i+1));
                 //Bukkit.broadcastMessage("RANK: " + rank.get(i));
                 //Bukkit.broadcastMessage("PERM_TYPE: " + dataPerms.get(slotIndex));
-                if(xsGuilds.getPermission().get(rank.get(i)).get(dataPerms.get(slotIndex))) {
+                dataInSlot.put(slotToplace,rank.get(i)+":"+dataPerms.get(slotIndex));
+                if(tempPerms.get(rank.get(i)).get(dataPerms.get(slotIndex))) {
                     inv.setItem(slotToplace, XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.OwnPermission",xsFile,p.getName()),xsGuilds,server,p.getName()));
                 } else {
                     inv.setItem(slotToplace, XSUtils.decodePlaceholderItems(XSUtils.decodeItemFromConfig("condition_configuration.NotOwnPermission",xsFile,p.getName()),xsGuilds,server,p.getName()));
                 }
             }
         }
+        getPermsSlot().put(p,dataInSlot);
 
         p.updateInventory();
     }

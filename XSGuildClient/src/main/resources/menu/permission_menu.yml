@@ -1,8 +1,9 @@
 
 condition_configuration:
-  back_slot: 10
+  back_slot: 9
   next_slot: 17
   infoUpgrade_slot:
+    - 10
     - 11
     - 12
     - 13
@@ -10,18 +11,21 @@ condition_configuration:
     - 15
     - 16
   blank_slot:
+    - 19
     - 20
     - 21
     - 22
     - 23
     - 24
     - 25
+    - 28
     - 29
     - 30
     - 31
     - 32
     - 33
     - 34
+    - 37
     - 38
     - 39
     - 40
@@ -101,7 +105,7 @@ condition_configuration:
     display: "<color:#E4C114>ʀᴀɴᴋ ᴜᴘɢʀᴀᴅᴇ"
     lore:
       - "<reset>"
-      - "<white>อนุญาติฟังก์ยศกิลด์"
+      - "<white>อนุญาติฟังก์ชั่นยศกิลด์"
       - "<color:#4A404B>▸ <gray>promote อัพเกรดยศกิลด์"
       - "<color:#4A404B>▸ <gray>demote ลดยศกิลด์"
   'SHOP_MANAGES':
@@ -136,10 +140,10 @@ configuration:
   title: "<dark_gray>Manage Permission"
   style:
     - "@ @ @ @ @ @ @ @ @"
-    - "@ back x x x x x x next"
-    - "@ S x x x x x x @"
-    - "@ M x x x x x x @"
-    - "@ N x x x x x x @"
+    - "back x x x x x x x next"
+    - "S x x x x x x x @"
+    - "M x x x x x x x @"
+    - "N x x x x x x x @"
     - "@ @ @ y & z @ @ @"
   items:
     'back':
