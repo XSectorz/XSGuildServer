@@ -112,6 +112,7 @@ configuration:
       material: PAPER
       amount: 1
       customModelData: 11235
+      action_left_click: "info:soon"
       display: "<color:#49C115>ข้อความประกาศ"
       lore: []
     'x':

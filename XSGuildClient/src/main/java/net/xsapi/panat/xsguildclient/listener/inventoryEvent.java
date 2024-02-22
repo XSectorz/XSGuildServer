@@ -1,5 +1,6 @@
 package net.xsapi.panat.xsguildclient.listener;
 
+import com.google.gson.Gson;
 import net.xsapi.panat.xsguildclient.config.menuConfig;
 import net.xsapi.panat.xsguildclient.handler.XSGuildsHandler;
 import net.xsapi.panat.xsguildclient.handler.XSHandler;
@@ -103,6 +104,11 @@ public class inventoryEvent implements Listener {
                     XSMenuHandler.openMenu(p, XS_FILE.MEMBERS_MENU,xsGuilds);
                 }
             } else if(action.equalsIgnoreCase("menu:settings")) {
+                if(!xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                    p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                    p.closeInventory();
+                    return;
+                }
                 XSMenuHandler.getPlayerPage().put(p,1);
                 XSMenuHandler.openMenu(p, XS_FILE.PERMISSION_MENU,xsGuilds);
             } else if(action.equalsIgnoreCase("back_page:perms")) {
@@ -118,6 +124,19 @@ public class inventoryEvent implements Listener {
                     XSMenuHandler.getPlayerPage().put(p,XSMenuHandler.getPlayerPage().get(p)+1);
                     XSMenuHandler.updateInventoryContents(p,XS_FILE.PERMISSION_MENU,xsGuilds,server,xsGuilds.getPermission());
                 }
+            } else if(action.equalsIgnoreCase("click:save")) {
+                if (!XSMenuHandler.getTempPerms().containsKey(p)) {
+                    return;
+                }
+                HashMap<String, HashMap<String, Boolean>> perms = XSMenuHandler.getTempPerms().get(p);
+                Gson gson = new Gson();
+                String permData = gson.toJson(perms);
+                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.UPDATE_PERMISSION +"<SPLIT>" + guild + ";" + permData);
+                p.sendMessage(XSUtils.decodeTextFromConfig("update_permission"));
+                p.closeInventory();
+            } else if(action.equalsIgnoreCase("info:soon")) {
+                p.sendMessage(XSUtils.decodeTextFromConfig("update_soon"));
+                p.closeInventory();
             }
         }
     }

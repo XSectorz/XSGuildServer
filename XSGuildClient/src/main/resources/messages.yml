@@ -85,6 +85,8 @@ system:
   upgrade_max: "%prefix%<color:#C01631>ไม่สามารถอัพเกรดได้เนื่องจากถึงระดับสูงสุดแล้ว"
   upgrade_resource_not_match: "%prefix%<color:#C01631>ไม่สามารถอัพเกรดได้เนื่องจากความต้องการไม่ตรงกับเงื่อนไขของระบบ"
   upgrade_max_placeholder: "<color:#C01631>เลเวลสูงสุดแล้ว"
+  update_permission: "%prefix%<color:#4AD842>ทำการอัพเดตสิทธิต่างๆภายในกิลด์เรียบร้อยแล้ว"
+  update_soon: "%prefix%<color:#4AD842>กรุณาตั้งตารอการอัพเดตเร็วๆนี้!"
   toggles:
     status_on: "<color:#4AD842>เปิดใช้งาน"
     status_off: "<color:#C01631>ปิดใช้งาน"

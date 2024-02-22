@@ -76,7 +76,7 @@ public class XSRedisHandler {
                         }
 
                         if(channel.equalsIgnoreCase(XSHandler.getSubChannel()+XSHandler.getServername())) {
-                            core.getPlugin().getLogger().info("GET MESSAGE " + message);
+                            //core.getPlugin().getLogger().info("GET MESSAGE " + message);
                             String type = message.split("<SPLIT>")[0];
                             String arguments = message.split("<SPLIT>")[1];
 
@@ -84,14 +84,14 @@ public class XSRedisHandler {
                                 //Bukkit.broadcastMessage(arguments.split(";")[0]);
                                 String player = arguments.split(";")[0];
                                 if(arguments.split(";").length == 2) { //NOT HAVE GUILD
-                                    Bukkit.broadcastMessage("PLAYER: " + player + " NOT HAVE GUILD" );
+                                    //Bukkit.broadcastMessage("PLAYER: " + player + " NOT HAVE GUILD" );
                                 } else {
                                     //XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.DEBUG+"<SPLIT>Recieved data from " + XSHandler.getServername());
                                     String server = arguments.split(";")[1];
                                     String guild = arguments.split(";")[2];
                                     String isInGuildChat = arguments.split(";")[3];
                                     String currentServer = arguments.split(";")[4];
-                                    Bukkit.broadcastMessage("PLAYER: " + player + " SERVER-> " + server + " GUILD-> " + guild + " CURRENT-> " + currentServer);
+                                    //Bukkit.broadcastMessage("PLAYER: " + player + " SERVER-> " + server + " GUILD-> " + guild + " CURRENT-> " + currentServer);
                                     if(isInGuildChat.equalsIgnoreCase("YES")) {
                                         XSHandler.getPlayerInGuildChat().add(player);
                                     }

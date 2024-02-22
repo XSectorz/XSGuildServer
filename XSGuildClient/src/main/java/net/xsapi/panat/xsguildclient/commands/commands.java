@@ -8,10 +8,7 @@ import net.xsapi.panat.xsguildclient.handler.XSMenuHandler;
 import net.xsapi.panat.xsguildclient.handler.XSRedisHandler;
 import net.xsapi.panat.xsguildclient.objects.XSGuilds;
 import net.xsapi.panat.xsguildclient.objects.XSSubGuilds;
-import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
-import net.xsapi.panat.xsguildclient.utils.XSGUILD_POSITIONS;
-import net.xsapi.panat.xsguildclient.utils.XSUtils;
-import net.xsapi.panat.xsguildclient.utils.XS_FILE;
+import net.xsapi.panat.xsguildclient.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -226,7 +223,7 @@ public class commands implements CommandExecutor {
                         String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
                         XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
 
-                        if(!(xsGuilds.getLeader().equalsIgnoreCase(p.getName()) || xsGuilds.getSubleader().contains(p.getName()))) {
+                        if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.HOME)) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
                             return false;
                         }
@@ -304,7 +301,7 @@ public class commands implements CommandExecutor {
                         String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
                         XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
 
-                        if(!(xsGuilds.getLeader().equalsIgnoreCase(p.getName()) || xsGuilds.getSubleader().contains(p.getName()))) {
+                        if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.HOME)) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
                             return false;
                         }
@@ -328,7 +325,7 @@ public class commands implements CommandExecutor {
                         String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
                         XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
 
-                        if(!(xsGuilds.getLeader().equalsIgnoreCase(p.getName()) || xsGuilds.getSubleader().contains(p.getName()))) {
+                        if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.INVITE)) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
                             return false;
                         }
@@ -351,7 +348,7 @@ public class commands implements CommandExecutor {
                         String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
                         XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
 
-                        if(!(xsGuilds.getLeader().equalsIgnoreCase(p.getName()) || xsGuilds.getSubleader().contains(p.getName()))) {
+                        if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.INVITE)) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
                             return false;
                         }
@@ -378,7 +375,7 @@ public class commands implements CommandExecutor {
                         String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
                         XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
 
-                        if(!xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                        if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.KICK)) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
                             return false;
                         }
@@ -436,7 +433,7 @@ public class commands implements CommandExecutor {
                         String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
                         XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
 
-                        if(!xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                        if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.RANK)) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
                             return false;
                         }
@@ -481,7 +478,7 @@ public class commands implements CommandExecutor {
                         String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
                         XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
 
-                        if(!xsGuilds.getLeader().equalsIgnoreCase(p.getName())) {
+                        if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.RANK)) {
                             p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
                             return false;
                         }
@@ -536,6 +533,12 @@ public class commands implements CommandExecutor {
                              double balance;
                              String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
                              XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                             if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.DEPOSIT)) {
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                                 return false;
+                             }
+
                              if(type.equalsIgnoreCase("points")) {
                                  balance = (double) XSHandler.getSCPoint().look(p.getUniqueId());
                                  if(balance < amount) {
@@ -602,6 +605,11 @@ public class commands implements CommandExecutor {
                              double balance;
                              String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
                              XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+
+                             if(!XSGuildsHandler.checkPermission(xsGuilds,p, XSPERMS_TYPE.WITHDRAW)) {
+                                 p.sendMessage(XSUtils.decodeTextFromConfig("required_permission_to_do"));
+                                 return false;
+                             }
 
                              if(type.equalsIgnoreCase("points")) {
                                  balance = xsGuilds.getBalance();

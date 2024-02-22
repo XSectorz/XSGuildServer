@@ -169,7 +169,7 @@ configuration:
     'z':
       material: PAPER
       amount: 1
-      action_left_click: "click:cancel"
+      action_left_click: "close"
       customModelData: 10224
       display: "<color:#BF0D0D>ยกเลิก"
       lore: []

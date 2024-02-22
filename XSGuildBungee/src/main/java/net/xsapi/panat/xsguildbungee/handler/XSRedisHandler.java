@@ -1,6 +1,7 @@
 package net.xsapi.panat.xsguildbungee.handler;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
@@ -12,6 +13,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class XSRedisHandler {
@@ -64,7 +66,7 @@ public class XSRedisHandler {
                         if(channel.startsWith(XSHandler.getSubChannel()+"_bungeecord")) {
 
 
-                            core.getPlugin().getLogger().info("[bungeecord] GET MESSAGE " + message);
+                           // core.getPlugin().getLogger().info("[bungeecord] GET MESSAGE " + message);
 
                             String type = message.split("<SPLIT>")[0];
                             String arguments = message.split("<SPLIT>")[1];
@@ -337,7 +339,7 @@ public class XSRedisHandler {
                                 double amount = Double.parseDouble(arguments.split(";")[1]);
                                 XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                                 xsGuilds.setBalance(xsGuilds.getBalance()+amount);
-                                core.getPlugin().getLogger().info("DEPOSIT CURRENT BALANCE: " + xsGuilds.getBalance());
+                                //core.getPlugin().getLogger().info("DEPOSIT CURRENT BALANCE: " + xsGuilds.getBalance());
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_POINTS.toString())) {
                                 String guild = arguments.split(";")[0];
@@ -465,6 +467,15 @@ public class XSRedisHandler {
                                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPGRADE_MAIN_RES+"<SPLIT>"+guild+";"+newLvl);
                                     }
                                 }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPDATE_PERMISSION.toString())) {
+
+                                String guild = arguments.split(";")[0];
+                                String perms = arguments.split(";")[1];
+                                Gson gson = new Gson();
+                                HashMap<String,HashMap<String,Boolean>> permData = gson.fromJson(perms, new TypeToken<HashMap<String,HashMap<String,Boolean>>>(){}.getType());
+                                XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
+                                xsGuilds.setPermission(permData);
+                                XSGuildsHandler.updateToAllServer(xsGuilds);
                             }
 
                         }
