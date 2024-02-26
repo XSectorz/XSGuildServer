@@ -78,7 +78,7 @@ public class XSGuildsHandler {
         xsGuilds.setPermission(permData);
 
         getGuildList().put(guildRealName,xsGuilds);
-        getPlayers().put(leader,guildName);
+        getPlayers().put(leader,guildRealName);
     }
 
     public static void forceLoad() {

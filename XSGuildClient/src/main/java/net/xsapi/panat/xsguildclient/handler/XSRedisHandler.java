@@ -91,7 +91,8 @@ public class XSRedisHandler {
                                     String guild = arguments.split(";")[2];
                                     String isInGuildChat = arguments.split(";")[3];
                                     String currentServer = arguments.split(";")[4];
-                                    //Bukkit.broadcastMessage("PLAYER: " + player + " SERVER-> " + server + " GUILD-> " + guild + " CURRENT-> " + currentServer);
+                                   // Bukkit.getLogger().info("PLAYER: " + player + " SERVER-> " + server + " GUILD-> " + guild + " CURRENT-> " + currentServer);
+
                                     if(isInGuildChat.equalsIgnoreCase("YES")) {
                                         XSHandler.getPlayerInGuildChat().add(player);
                                     }

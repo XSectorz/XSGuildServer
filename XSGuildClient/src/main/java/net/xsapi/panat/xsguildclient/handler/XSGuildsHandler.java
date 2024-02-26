@@ -35,11 +35,11 @@ public class XSGuildsHandler {
             //Bukkit.getLogger().info("GUILD: " + guild.getKey());
             //Bukkit.getLogger().info("DATA: ");
             for (Map.Entry<String, XSSubGuilds> subguild : guild.getValue().getSubGuilds().entrySet()) {
-                //Bukkit.getLogger().info("SERVER: " + subguild.getValue().getSubServer());
-                //Bukkit.getLogger().info("LEVEL: " + subguild.getValue().getLevel());
-                //Bukkit.getLogger().info("TECH: " + subguild.getValue().getTech());
+               // Bukkit.getLogger().info("SERVER: " + subguild.getValue().getSubServer());
+               // Bukkit.getLogger().info("LEVEL: " + subguild.getValue().getLevel());
+             //   Bukkit.getLogger().info("TECH: " + subguild.getValue().getTech());
             }
-            Bukkit.getLogger().info("--------------------------");
+           // Bukkit.getLogger().info("--------------------------");
             getGuildList().put(guild.getKey(),guild.getValue());
         }
     }
