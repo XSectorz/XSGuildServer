@@ -58,6 +58,7 @@ public class XSGuildsHandler {
         xsGuilds.getMembers().put(leader, XSGUILD_POSITIONS.LEADER.toString());
         xsGuilds.setLeader(leader);
         xsGuilds.setMaxBalance(mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.main.level_1"));
+        xsGuilds.setMaxMembers(mainConfig.getConfig().getInt("guild_configuration.members.main.level_1"));
 
         for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
             XSSubGuilds xsSubGuilds = loadSubGuild(servers,id);

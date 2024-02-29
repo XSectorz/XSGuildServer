@@ -259,6 +259,7 @@ public class commands implements CommandExecutor {
                         XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                         String server = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[0];
                         String currentServer = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[2];
+
                         XSSubGuilds xsSubGuilds = xsGuilds.getSubGuilds().get(server);
 
                         if(!xsSubGuilds.getHomeList().containsKey(homeName)) {

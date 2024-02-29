@@ -82,8 +82,11 @@ public class XSRedisHandler {
                                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                                     for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
                                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATED+"<SPLIT>"+servers+";"+guildJson);
+                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_PLAYER+"<SPLIT>"+servers+";"+guildRealName+";"+subServer+";"+leader);
                                     }
                                 }
+
+                                //XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild+"<SPLIT>"+ mainConfig.customConfig.getString("configuration.server"));
                                  //core.getPlugin().getLogger().info("Create guild " + guildName);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.REQ_DATA.toString())) {
                                 String server = arguments.split(";")[0];

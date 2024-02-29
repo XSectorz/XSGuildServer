@@ -109,7 +109,7 @@ public class XSRedisHandler {
                                 XSGuildsHandler.getGuildList().put(xsGuilds.getGuildRealName(),xsGuilds);
                                 //Bukkit.broadcastMessage("UPDATED GUILD DATA TO SERVER");
                                 if(Bukkit.getPlayer(xsGuilds.getLeader()) != null) {
-                                    XSGuildsHandler.getPlayers().put(xsGuilds.getLeader(),server+"<SPLIT>"+xsGuilds.getGuildRealName());
+                                    XSGuildsHandler.getPlayers().put(xsGuilds.getLeader(),server+"<SPLIT>"+xsGuilds.getGuildRealName()+"<SPLIT>"+mainConfig.customConfig.getString("configuration.server"));
                                     //Bukkit.broadcastMessage("PLAYER ONLINE UPDATED TO " + server+"<SPLIT>"+xsGuilds.getGuildRealName());
                                 }
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.INVITE_RETURN.toString())) {
@@ -187,7 +187,7 @@ public class XSRedisHandler {
                                         } else if(typeResond.equalsIgnoreCase("ACCEPT")) {
                                             String server = arguments.split(";")[2];
                                             String guild = arguments.split(";")[3];
-                                            XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild);
+                                            XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild+"<SPLIT>"+ mainConfig.customConfig.getString("configuration.server"));
                                             target.sendMessage(XSUtils.decodeTextFromConfig("accept_invite"));
                                         }
                                     } catch (Exception ignored) {
@@ -199,6 +199,15 @@ public class XSRedisHandler {
                                 Gson gson = new Gson();
                                 XSGuilds xsGuilds = gson.fromJson(jsonGuild, XSGuilds.class);
                                 XSGuildsHandler.getGuildList().replace(xsGuilds.getGuildRealName(),xsGuilds);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPDATE_PLAYER.toString())) {
+                                String server = arguments.split(";")[0];
+                                String guildRealname = arguments.split(";")[1];
+                                String subServer = arguments.split(";")[2];
+                                String leader = arguments.split(";")[3];
+                                if(Bukkit.getPlayer(leader) != null) {
+                                    XSGuildsHandler.getPlayers().put(leader,server+"<SPLIT>"+guildRealname+"<SPLIT>"+subServer);
+                                }
+
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.FORCE_LOAD_ALL.toString())) {
                                 XSGuildsHandler.getGuildList().clear();
                                 XSGuildsHandler.getPlayers().clear();
