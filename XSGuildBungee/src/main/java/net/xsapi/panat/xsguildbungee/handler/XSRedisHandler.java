@@ -75,16 +75,25 @@ public class XSRedisHandler {
                                 String leader = arguments.split(";")[0];
                                 String guildRealName = arguments.split(";")[1];
                                 String guildName = arguments.split(";")[2];
-                                XSDatabaseHandler.createGuild(guildRealName,guildName,leader);
-                                Gson gson = new Gson();
-                                String guildJson = gson.toJson(XSGuildsHandler.getGuildList().get(guildRealName));
-                                //core.getPlugin().getLogger().info(guildJson);
-                                for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
-                                    for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATED+"<SPLIT>"+servers+";"+guildJson);
-                                        XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_PLAYER+"<SPLIT>"+servers+";"+guildRealName+";"+subServer+";"+leader);
+
+                                if(XSDatabaseHandler.createGuild(guildRealName,guildName,leader)) {
+                                    Gson gson = new Gson();
+                                    String guildJson = gson.toJson(XSGuildsHandler.getGuildList().get(guildRealName));
+                                    //core.getPlugin().getLogger().info(guildJson);
+                                    for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                                        for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATED+"<SPLIT>"+servers+";"+guildJson);
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPDATE_PLAYER+"<SPLIT>"+servers+";"+guildRealName+";"+subServer+";"+leader);
+                                        }
+                                    }
+                                } else {
+                                    for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
+                                        for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
+                                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.GUILD_ALREADY_EXIST+"<SPLIT>"+leader);
+                                        }
                                     }
                                 }
+
 
                                 //XSGuildsHandler.getPlayers().put(player,server+"<SPLIT>"+guild+"<SPLIT>"+ mainConfig.customConfig.getString("configuration.server"));
                                  //core.getPlugin().getLogger().info("Create guild " + guildName);

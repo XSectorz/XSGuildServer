@@ -206,6 +206,9 @@ public class XSRedisHandler {
                                 String leader = arguments.split(";")[3];
                                 if(Bukkit.getPlayer(leader) != null) {
                                     XSGuildsHandler.getPlayers().put(leader,server+"<SPLIT>"+guildRealname+"<SPLIT>"+subServer);
+                                    //Bukkit.broadcastMessage("NOT NULL ADDED");
+                                } else {
+                                    //Bukkit.broadcastMessage("LEADER NULL: " + leader);
                                 }
 
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.FORCE_LOAD_ALL.toString())) {
@@ -378,6 +381,11 @@ public class XSRedisHandler {
                             }  else if(type.equalsIgnoreCase(XSDATA_TYPE.SET_PRICE.toString())) {
                                 double price = Double.parseDouble(arguments.split(";")[0]);
                                 XSHandler.setCreatePrice(price);
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.GUILD_ALREADY_EXIST.toString())) {
+                                 String leader = arguments.split(";")[0];
+                                 if(Bukkit.getPlayer(leader) != null) {
+                                     Bukkit.getPlayer(leader).sendMessage(XSUtils.decodeTextFromConfig("guild_already_exist"));
+                                 }
                             }
                         }
                     }

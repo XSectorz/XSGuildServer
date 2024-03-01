@@ -94,13 +94,13 @@ public class XSDatabaseHandler {
         }
     }
 
-    public static void createGuild(String guildRealName,String guildName,String leader) {
+    public static boolean  createGuild(String guildRealName,String guildName,String leader) {
         try {
             Connection connection = DriverManager.getConnection(getJdbcUrl(),getUSER(),getPASS());
 
             String checkGuild = "SELECT EXISTS(SELECT * FROM " + getGlobalTable() + " WHERE Guild = ?) AS exist";
             PreparedStatement preparedStatement = connection.prepareStatement(checkGuild);
-            preparedStatement.setString(1, guildName);
+            preparedStatement.setString(1, guildRealName);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
@@ -109,17 +109,19 @@ public class XSDatabaseHandler {
                 if (!exists) {
                     createMainGuildServer(connection, guildRealName,guildName,leader);
                 } else {
-                    //core.getPlugin().getLogger().info("Guild already exists");
+                    return false;
                 }
             }
 
             resultSet.close();
             preparedStatement.close();
             connection.close();
+            return true;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
     }
     private static void createMainGuildServer(Connection connection,String guild,String guildName,String leader) {
         String insertQuery = "INSERT INTO " + "xsguilds_bungee_main" + " (Guild, GuildName, Players, Balance, GuildLevel, Permission) "

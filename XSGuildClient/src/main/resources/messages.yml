@@ -87,6 +87,7 @@ system:
   upgrade_max_placeholder: "<color:#C01631>เลเวลสูงสุดแล้ว"
   update_permission: "%prefix%<color:#4AD842>ทำการอัพเดตสิทธิต่างๆภายในกิลด์เรียบร้อยแล้ว"
   update_soon: "%prefix%<color:#4AD842>กรุณาตั้งตารอการอัพเดตเร็วๆนี้!"
+  guild_already_exist: "%prefix%<color:#C01631>ชื่อกิลด์ดังกล่าวมีอยู่ในระบบอยู่แล้ว!"
   toggles:
     status_on: "<color:#4AD842>เปิดใช้งาน"
     status_off: "<color:#C01631>ปิดใช้งาน"
