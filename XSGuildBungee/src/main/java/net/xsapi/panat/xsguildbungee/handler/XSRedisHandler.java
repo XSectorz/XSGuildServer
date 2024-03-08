@@ -2,6 +2,7 @@ package net.xsapi.panat.xsguildbungee.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.xsapi.panat.xsguildbungee.config.mainConfig;
 import net.xsapi.panat.xsguildbungee.core;
@@ -53,7 +54,7 @@ public class XSRedisHandler {
 
     public static void subscribeToChannelAsync(String channelName) {
         Thread thread = new Thread(() -> {
-            try (Jedis jedis = new Jedis(getHostRedis(), getRedisPort())) {
+            try (Jedis jedis = new Jedis(getHostRedis(), getRedisPort(),0)) {
                 if(!getRedisPass().isEmpty()) {
                     jedis.auth(getRedisPass());
                 }
@@ -61,12 +62,13 @@ public class XSRedisHandler {
                     @Override
                     public void onMessage(String channel, String message) {
                         if (Thread.currentThread().isInterrupted()) {
+                            core.getPlugin().getLogger().info("Redis Guild : Is interrupt");
                             return;
                         }
+
                         if(channel.startsWith(XSHandler.getSubChannel()+"_bungeecord")) {
 
-
-                           // core.getPlugin().getLogger().info("[bungeecord] GET MESSAGE " + message);
+                            //core.getPlugin().getLogger().info("[bungeecord] GET MESSAGE " + message);
 
                             String type = message.split("<SPLIT>")[0];
                             String arguments = message.split("<SPLIT>")[1];
@@ -177,6 +179,7 @@ public class XSRedisHandler {
                                             XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+server,XSDATA_TYPE.INVITE_RETURN+"<SPLIT>SENT;" + sender+";"+player);
                                             XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
                                                     XSDATA_TYPE.INVITE_GET+"<SPLIT>"+guild+";"+player);
+                                            core.getPlugin().getLogger().info("SENT MESSAGE: " + ChatColor.GREEN + (XSHandler.getSubChannel()+target.getServer().getInfo().getName() + " , " + XSDATA_TYPE.INVITE_GET+"<SPLIT>"+guild+";"+player));
                                         }
                                     }
                                 }
@@ -487,6 +490,7 @@ public class XSRedisHandler {
                                 HashMap<String,HashMap<String,Boolean>> permData = gson.fromJson(perms, new TypeToken<HashMap<String,HashMap<String,Boolean>>>(){}.getType());
                                 XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
                                 xsGuilds.setPermission(permData);
+                               // core.getPlugin().getLogger().info("PERMISSION SET " + permData);
                                 XSGuildsHandler.updateToAllServer(xsGuilds);
                             }
 
@@ -509,6 +513,7 @@ public class XSRedisHandler {
                 if(!getRedisPass().isEmpty()) {
                     jedis.auth(getRedisPass());
                 }
+               // core.getPlugin().getLogger().info("[bungeecord] sent to " + CHName + " WITH " + message);
                 jedis.publish(CHName, message);
             } catch (Exception e) {
                 e.printStackTrace();

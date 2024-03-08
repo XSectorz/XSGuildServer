@@ -32,6 +32,6 @@ public class task_save {
                // core.getPlugin().getLogger().info("Saved complete!....");
 
             }
-        }, 0L, mainConfig.getConfig().getInt("auto-saved"), TimeUnit.SECONDS);
+        }, mainConfig.getConfig().getInt("auto-saved"), mainConfig.getConfig().getInt("auto-saved"), TimeUnit.SECONDS);
     }
 }

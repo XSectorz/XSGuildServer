@@ -10,15 +10,17 @@ import net.xsapi.panat.xsguildclient.utils.XSDATA_TYPE;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class chatEvent implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         String message = e.getMessage();
         Player p = e.getPlayer();
         if(XSHandler.getPlayerInGuildChat().contains(p.getName())) {
+            e.setCancelled(true);
             message = message.replaceAll("<[^<>]*>", "");
             String guild = XSGuildsHandler.getPlayers().get(p.getName()).split("<SPLIT>")[1];
             XSGuilds xsGuilds = XSGuildsHandler.getGuildList().get(guild);
@@ -33,7 +35,6 @@ public class chatEvent implements Listener {
             formatChat = formatChat.replace("%message%",message);
 
             XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.GUILD_MESSAGE_SENT+"<SPLIT>"+guild+";"+formatChat);
-            e.setCancelled(true);
         }
     }
 }

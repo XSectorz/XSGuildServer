@@ -88,6 +88,7 @@ public class XSGuildsHandler {
             for(String subserver : mainConfig.getConfig().getStringList("guilds-group." + servers)) {
                 Gson gson = new Gson();
                 String guildJson = gson.toJson(XSGuildsHandler.getGuildList());
+                core.getPlugin().getLogger().info("SENT FORCE LOAD TO " + subserver);
                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subserver, XSDATA_TYPE.FORCE_LOAD_ALL+"<SPLIT>"+guildJson);
                 XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subserver, XSDATA_TYPE.SET_PRICE+"<SPLIT>"+XSHandler.getCreatePrice());
             }
@@ -143,6 +144,7 @@ public class XSGuildsHandler {
 
                 //FORMAT [SUB_LEADER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE], MEMBER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE], NEW_MEMBER:[WITHDRAW<SPLIT>FALSE; DEPOSIT<SPLIT>FALSE; INVITE<SPLIT>FALSE; HOME<SPLIT>FALSE; PROMOTE<SPLIT>FALSE; SHOP<SPLIT>FALSE]]
                 HashMap<String,HashMap<String,Boolean>> dataHash = new HashMap<>();
+
               // core.getPlugin().getLogger().info("perms : " + permission);
                 for(String section : permission.split(",")) {
                 //    core.getPlugin().getLogger().info("section : " + section);
@@ -153,7 +155,8 @@ public class XSGuildsHandler {
                     for(String permsData : perms.replace("[","").replace("]","").split(";")) {
                    //    core.getPlugin().getLogger().info("permData : " + permsData);
                         String type = permsData.split("<SPLIT>")[0];
-                        Boolean bool = Boolean.getBoolean(permsData.split("<SPLIT>")[1]);
+                        Boolean bool = Boolean.parseBoolean(permsData.split("<SPLIT>")[1]);
+                        //core.getPlugin().getLogger().info("PERMS: " + permsData.split("<SPLIT>")[1] + " is " + bool);
                         permHash.put(type,bool);
                     }
 

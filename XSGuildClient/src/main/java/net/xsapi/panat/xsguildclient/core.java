@@ -26,12 +26,12 @@ public final class core extends JavaPlugin {
         XSHandler.initSystem();
         XSHandler.loadOnlinePlayerData();
         XSHandler.APILoader();
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+       // getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     @Override
     public void onDisable() {
-        getServer().getMessenger().unregisterIncomingPluginChannel(this);
+        //getServer().getMessenger().unregisterIncomingPluginChannel(this);
         XSRedisHandler.destroyThreads();
         XSHandler.unregisterPlaceholder();
     }

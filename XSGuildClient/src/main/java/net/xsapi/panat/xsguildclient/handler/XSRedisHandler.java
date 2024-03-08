@@ -64,19 +64,22 @@ public class XSRedisHandler {
 
     public static void subscribeToChannelAsync(String channelName) {
         Thread thread = new Thread(() -> {
-            try (Jedis jedis = new Jedis(getHostRedis(), getRedisPort())) {
+            try (Jedis jedis = new Jedis(getHostRedis(), getRedisPort(),0)) {
                 if(!getRedisPass().isEmpty()) {
                     jedis.auth(getRedisPass());
                 }
                 JedisPubSub jedisPubSub = new JedisPubSub() {
                     @Override
                     public void onMessage(String channel, String message) {
+                     //   core.getPlugin().getLogger().info("GET MESSAGE NOT INTERRUPT" + message);
                         if (Thread.currentThread().isInterrupted()) {
+                            core.getPlugin().getLogger().info("GET MESSAGE INTERRUPT" + message);
                             return;
                         }
+                        core.getPlugin().getLogger().info("[GET MESSAGE FROM CHANNEL] " + XSHandler.getSubChannel()+XSHandler.getServername());
 
                         if(channel.equalsIgnoreCase(XSHandler.getSubChannel()+XSHandler.getServername())) {
-                            //core.getPlugin().getLogger().info("GET MESSAGE " + message);
+                            core.getPlugin().getLogger().info("GET MESSAGE " + message);
                             String type = message.split("<SPLIT>")[0];
                             String arguments = message.split("<SPLIT>")[1];
 
@@ -407,6 +410,7 @@ public class XSRedisHandler {
                 if(!getRedisPass().isEmpty()) {
                     jedis.auth(getRedisPass());
                 }
+                core.getPlugin().getLogger().info("SENT: " + CHName + " WITH MSG " + message);
                 jedis.publish(CHName, message);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -415,6 +419,9 @@ public class XSRedisHandler {
     }
 
     public static void destroyThreads() {
+
+        core.getPlugin().getLogger().info("THREADS: " + threads.size());
+
         for(Thread thread : threads) {
             thread.interrupt();
         }

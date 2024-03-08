@@ -211,7 +211,7 @@ public class XSDatabaseHandler {
                 }
                 dataPerms.add(rank+":"+perms.toString().replace(",",";"));
             }
-            //core.getPlugin().getLogger().info("SAVED : " + dataPerms);
+          //  core.getPlugin().getLogger().info("SAVED : " + dataPerms);
             preparedStatementInsert.setString(4, dataPerms.toString().replace(" ",""));
             preparedStatementInsert.executeUpdate();
 
