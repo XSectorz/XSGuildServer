@@ -369,7 +369,7 @@ public class XSRedisHandler {
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+target.getServer().getInfo().getName(),
                                             XSDATA_TYPE.WITHDRAW_POINTS_RESPOND+"<SPLIT>"+player+";"+amount);
                                 }
-                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_POINTS.toString())) {
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_COINS.toString())) {
                                 String server = arguments.split(";")[0];
                                 String guild = arguments.split(";")[1];
                                 double amount = Double.parseDouble(arguments.split(";")[2]);

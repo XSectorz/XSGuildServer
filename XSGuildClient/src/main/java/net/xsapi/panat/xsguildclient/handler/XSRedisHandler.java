@@ -278,7 +278,7 @@ public class XSRedisHandler {
                                 } catch (Exception ignored) {
 
                                 }
-                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_POINTS_RESPOND.toString())) {
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.WITHDRAW_COINS_RESPOND.toString())) {
                                 String player = arguments.split(";")[0];
                                 double amount = Double.parseDouble(arguments.split(";")[1]);
                                 DecimalFormat df = new DecimalFormat("#.##");
