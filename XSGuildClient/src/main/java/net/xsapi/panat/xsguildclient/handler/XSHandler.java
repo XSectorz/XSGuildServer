@@ -40,6 +40,8 @@ public class XSHandler {
     private static HashMap<Integer, XSUpgrades> mainClanUpgrades = new HashMap<>();
     private static HashMap<Integer, XSUpgrades> subClanUpgrades = new HashMap<>();
 
+    private static HashMap<String,String> teleportHomeData = new HashMap<>();
+
     public static ArrayList<String> getPlayerInGuildChat() {
         return playerInGuildChat;
     }
@@ -65,6 +67,10 @@ public class XSHandler {
 
     public static HashMap<Integer, XSUpgrades> getSubClanUpgrades() {
         return subClanUpgrades;
+    }
+
+    public static HashMap<String,String> getTeleportHomeData() {
+        return teleportHomeData;
     }
 
     public static void setMainClanUpgrades(HashMap<Integer, XSUpgrades> mainClanUpgrades) {

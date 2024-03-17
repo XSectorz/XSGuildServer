@@ -168,7 +168,7 @@ public class XSGuildsHandler {
                 //core.getPlugin().getLogger().info("----------");
                 //core.getPlugin().getLogger().info(dataHash.toString());
                 //core.getPlugin().getLogger().info("----------");
-
+                core.getPlugin().getLogger().info("Guild " + xsGuilds.getGuildName()) ;
                 for(String servers : mainConfig.getConfig().getSection("guilds-group").getKeys()) {
                     XSSubGuilds xsSubGuilds =  loadSubGuild(servers,guildID);
                     xsSubGuilds.setMaxBalance((mainConfig.getConfig().getDouble("guild_configuration.balance_capacity.sub.level_"+xsSubGuilds.getLevel())));
@@ -264,7 +264,7 @@ public class XSGuildsHandler {
                     //core.getPlugin().getLogger().info("HOME DATA: " + Arrays.toString(homes));
                     for(String home : homes) {
                         String homeName = home.split(":")[0];
-                        xsSubGuilds.getHomeList().put(homeName,home);
+                        xsSubGuilds.getHomeList().put(homeName.replace(" ",""),home.replace(" ",""));
                     }
                     //core.getPlugin().getLogger().info("SERVER: " + server + " HOME: " + homes.length);
                 }

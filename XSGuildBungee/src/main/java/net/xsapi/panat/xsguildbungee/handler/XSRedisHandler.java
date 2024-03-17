@@ -465,7 +465,13 @@ public class XSRedisHandler {
                                 for(String subServer : mainConfig.getConfig().getStringList("guilds-group." + server)) {
                                     XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+subServer,XSDATA_TYPE.UPGRADE_RES+"<SPLIT>"+guild+";"+newLvl);
                                 }
-                                //XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+,XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+guild+";"+homeN+";"+player);
+                                // XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+homeData+";"+p.getName());
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.TELEPORT_TO_HOME.toString())) {
+                                //String server = arguments.split(";")[0];
+                                String homeData = arguments.split(";")[1];
+                                String target = arguments.split(";")[2];
+                                core.getPlugin().getLogger().info("SENT: " + homeData.split(":")[1]);
+                                XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+homeData.split(":")[1],XSDATA_TYPE.TELEPORT_TO_HOME_RESPOND+"<SPLIT>"+homeData+";"+target);
                             } else if(type.equalsIgnoreCase(XSDATA_TYPE.UPGRADE_MAIN_REQ.toString())) {
                                 String guild = arguments.split(";")[0];
                                 String level = arguments.split(";")[1];

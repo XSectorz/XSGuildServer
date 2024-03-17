@@ -389,6 +389,11 @@ public class XSRedisHandler {
                                  if(Bukkit.getPlayer(leader) != null) {
                                      Bukkit.getPlayer(leader).sendMessage(XSUtils.decodeTextFromConfig("guild_already_exist"));
                                  }
+                            } else if(type.equalsIgnoreCase(XSDATA_TYPE.TELEPORT_TO_HOME_RESPOND.toString())) {
+                                String homeData = arguments.split(";")[0];
+                                String target = arguments.split(";")[1];
+
+                                XSHandler.getTeleportHomeData().put(target,System.currentTimeMillis()+"<SPLIT>"+homeData);
                             }
                         }
                     }

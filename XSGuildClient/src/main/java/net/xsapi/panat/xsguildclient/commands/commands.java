@@ -284,9 +284,8 @@ public class commands implements CommandExecutor {
                             p.sendMessage(XSUtils.decodeTextFromConfig("home_success").replace("%home_name%",homeN));
                             return false;
                         } else {
-                            String homeN = homeData.split(":")[0];
                             XSHandler.sendPlayerToServer(p,homeData.split(":")[1]);
-                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+guild+";"+serverLoc+";"+homeN+";"+p.getName());
+                            XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord",XSDATA_TYPE.TELEPORT_TO_HOME+"<SPLIT>"+server+";"+homeData+";"+p.getName());
                         }
 
                     } else if(args[0].equalsIgnoreCase("delhome")) {
