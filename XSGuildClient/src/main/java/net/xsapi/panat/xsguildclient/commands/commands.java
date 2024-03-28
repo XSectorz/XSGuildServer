@@ -207,7 +207,11 @@ public class commands implements CommandExecutor {
                             return false;
                         }
 
-                        String nameWithColor = args[1].replace('&','§');
+                        String nameWithColor = args[1].replace("&","{color}");
+
+                        nameWithColor = ChatColor.stripColor(XSUtils.decodeText(nameWithColor).replace('&','§')); //remove minimessage format from text
+                        nameWithColor = nameWithColor.replace("{color}","§");
+
                         XSHandler.getSCPoint().take(p.getUniqueId(),(int) XSHandler.getCreatePrice());
                         XSRedisHandler.sendRedisMessage(XSHandler.getSubChannel()+"_bungeecord", XSDATA_TYPE.CREATE +"<SPLIT>" + p.getName() + ";" + ChatColor.stripColor(name) + ";" + nameWithColor);
                         p.sendMessage(XSUtils.decodeTextFromConfig("create").replace("%guild_name%",nameWithColor));
